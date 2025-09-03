@@ -12,8 +12,8 @@ using Proyecto_Cartas.BD.Datos;
 namespace Proyecto_Cartas.BD.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250901223550_test1")]
-    partial class test1
+    [Migration("20250903230926_test")]
+    partial class test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,7 +52,15 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.Property<int>("EstadoRegistro")
                         .HasColumnType("int");
 
+                    b.Property<int>("UsuarioID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("cantidadMonedas")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UsuarioID");
 
                     b.ToTable("Billeteras");
                 });
@@ -295,6 +303,17 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UsuariosPartida");
+                });
+
+            modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.Billetera", b =>
+                {
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.ConfiguracionUsuario", b =>

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Proyecto_Cartas.BD.Migrations
 {
     /// <inheritdoc />
-    public partial class test1 : Migration
+    public partial class test : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,19 +22,6 @@ namespace Proyecto_Cartas.BD.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Amigos", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Billeteras",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EstadoRegistro = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Billeteras", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -171,6 +158,27 @@ namespace Proyecto_Cartas.BD.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Billeteras",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UsuarioID = table.Column<int>(type: "int", nullable: false),
+                    cantidadMonedas = table.Column<int>(type: "int", nullable: false),
+                    EstadoRegistro = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Billeteras", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Billeteras_Usuarios_UsuarioID",
+                        column: x => x.UsuarioID,
+                        principalTable: "Usuarios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ConfiguracionesUsuario",
                 columns: table => new
                 {
@@ -216,6 +224,11 @@ namespace Proyecto_Cartas.BD.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Billeteras_UsuarioID",
+                table: "Billeteras",
+                column: "UsuarioID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConfiguracionesUsuario_UsuarioID",

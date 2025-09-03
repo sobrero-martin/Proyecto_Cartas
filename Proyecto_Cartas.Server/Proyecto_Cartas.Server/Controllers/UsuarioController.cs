@@ -56,7 +56,8 @@ namespace Proyecto_Cartas.Server.Controllers
         {
             try
             {
-                await context.Usuarios.AddAsync(usuario);
+                await repositorio.Post(usuario);   
+                //await context.Usuarios.AddAsync(usuario);
                 await context.SaveChangesAsync();
                 return Ok(usuario.Id);
             }
@@ -70,30 +71,36 @@ namespace Proyecto_Cartas.Server.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult> PutUsuario(int id, Usuario usuario)
         {
-            if (id != usuario.Id)
-            {
-                return BadRequest("Datos no válidos.");
-            }
-            var existe = await context.Usuarios.AnyAsync(x => x.Id == id);
-            if (!existe)
-            {
-                return NotFound($"No se encontró el usuario con id {id}");
-            }
-            context.Update(usuario);
-            await context.SaveChangesAsync();
+            // if (id != usuario.Id)
+            //{
+            //  return BadRequest("Datos no válidos.");
+            //}
+            //var existe = await context.Usuarios.AnyAsync(x => x.Id == id);
+            //var existe = await repositorio.Existe(id);
+
+            //if (!existe)
+            //{
+            //    return NotFound($"No se encontró el usuario con id {id}");
+            //}
+            //context.Update(usuario);
+            //await context.SaveChangesAsync();
+            var resultado = await repositorio.Put(id, usuario);
             return Ok($"Usuario con id {id} actualizado correctamente");
         }
 
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> DeleteUsuario(int id)
         {
-            var usuario = await context.Usuarios.FirstOrDefaultAsync(x => x.Id == id);
-            if (usuario == null)
-            {
-                return NotFound($"No se encontró el usuario con id {id}");
-            }
-            context.Usuarios.Remove(usuario);
-            await context.SaveChangesAsync();
+            //var usuario = await context.Usuarios.FirstOrDefaultAsync(x => x.Id == id);
+            //if (usuario == null)
+            //{
+            //    return NotFound($"No se encontró el usuario con id {id}");
+            //}
+            //context.Usuarios.Remove(usuario);
+            //await context.SaveChangesAsync();
+            var resultado = await repositorio.Delete(id);
+            if (!resultado) return NotFound($"No se encontró el usuario con id {id}");
+
             return Ok($"Usuario con id {id} eliminado correctamente");
         }
 

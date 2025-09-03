@@ -6,5 +6,13 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
     {
         Task<List<E>> GetFull();
         Task<E?> GetById(int id);
+
+        Task<int> Post(E entidad);
+
+        Task<bool> Existe(int id);
+
+        Task<bool> Put(int id, E entidad);
+
+        Task<bool> Delete(int id);
     }
 }
