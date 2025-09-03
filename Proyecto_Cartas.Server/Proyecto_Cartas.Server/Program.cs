@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Proyecto_Cartas.BD.Datos;
+using Proyecto_Cartas.Repositorio.Repositorios;
 using Proyecto_Cartas.Server.Client.Pages;
 using Proyecto_Cartas.Server.Components;
+using Proyecto_Cartas.BD.Datos.Entidades;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,8 @@ var connectionString = builder.Configuration.GetConnectionString("ConnSqlServer"
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
+
+builder.Services.AddScoped<IRepositorio<Usuario>, Repositorio<Usuario>>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

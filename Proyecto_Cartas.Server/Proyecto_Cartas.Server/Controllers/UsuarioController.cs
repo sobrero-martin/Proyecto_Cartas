@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Proyecto_Cartas.BD.Datos;
 using Proyecto_Cartas.BD.Datos.Entidades;
+using Proyecto_Cartas.Repositorio.Repositorios;
 
 namespace Proyecto_Cartas.Server.Controllers
 {
@@ -10,15 +11,21 @@ namespace Proyecto_Cartas.Server.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly AppDbContext context;
-        public UsuarioController(AppDbContext context)
+        private readonly IRepositorio<Usuario> repositorio;
+
+        public UsuarioController(AppDbContext context, IRepositorio<Usuario> repositorio)
         {
             this.context = context;
+            this.repositorio = repositorio;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<Usuario>>>  GetUsuarios()
         {
-            var usuarios = await context.Usuarios.ToListAsync();
+            //var usuarios = await context.Usuarios.ToListAsync();
+
+            var usuarios = await repositorio.GetFull();
+
             if (usuarios == null)
             {
                 return NotFound("No se encontraron usuarios(NULL).");
@@ -35,7 +42,8 @@ namespace Proyecto_Cartas.Server.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Usuario>> GetUsuario(int id)
         {
-            var usuario = await context.Usuarios.FirstOrDefaultAsync(x => x.Id == id);
+            //var usuario = await context.Usuarios.FirstOrDefaultAsync(x => x.Id == id);
+            var usuario = await repositorio.GetById(id);
             if (usuario == null)
             {
                 return NotFound($"No se encontró el usuario con id {id}");
