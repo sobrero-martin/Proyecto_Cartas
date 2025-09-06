@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Proyecto_Cartas.BD.Datos;
 using Proyecto_Cartas.BD.Datos.Entidades;
 using Proyecto_Cartas.Repositorio.Repositorios;
+using Proyecto_Cartas.Shared.DTO;
 
 namespace Proyecto_Cartas.Server.Controllers
 {
@@ -10,12 +11,10 @@ namespace Proyecto_Cartas.Server.Controllers
     [Route("api/[controller]")]
     public class UsuarioController : ControllerBase
     {
-        private readonly AppDbContext context;
-        private readonly IRepositorio<Usuario> repositorio;
+        private readonly IUsuarioRepositorio repositorio;
 
-        public UsuarioController(AppDbContext context, IRepositorio<Usuario> repositorio)
+        public UsuarioController(IUsuarioRepositorio repositorio)
         {
-            this.context = context;
             this.repositorio = repositorio;
         }
 
@@ -39,7 +38,27 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(usuarios);
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("lista")] // api/usuario/lista
+        public async Task<ActionResult<List<UsuarioListadoDTO>>> GetLista()
+        {
+            //var usuarios = await context.Usuarios.ToListAsync();
+
+            var lista = await repositorio.GetListado();
+
+            if (lista == null)
+            {
+                return NotFound("No se encontraron usuarios(NULL).");
+            }
+
+            if (lista.Count == 0)
+            {
+                return Ok("No existen usuarios.");
+            }
+
+            return Ok(lista);
+        }
+
+        [HttpGet("{id:int}")] 
         public async Task<ActionResult<Usuario>> GetUsuario(int id)
         {
             //var usuario = await context.Usuarios.FirstOrDefaultAsync(x => x.Id == id);
@@ -58,7 +77,6 @@ namespace Proyecto_Cartas.Server.Controllers
             {
                 await repositorio.Post(usuario);   
                 //await context.Usuarios.AddAsync(usuario);
-                await context.SaveChangesAsync();
                 return Ok(usuario.Id);
             }
             catch (Exception e) 
