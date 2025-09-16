@@ -1,0 +1,68 @@
+﻿@page "/login"
+@inject HttpClient Http
+
+<PageTitle>Login</PageTitle>
+
+<h1>Login</h1>
+<br />
+<form>
+    <label for="email">Email:</label><br />
+    <input type="email" @bind="Email" placeholder="Enter your email" /><br />
+    <br />
+    <label for="password">Password:</label><br />
+    <input type="password" @bind="Password" placeholder="Enter your password" /><br />
+    <br />
+    <button type="button" @onclick="OnLogin" >Login</button> <button type="button" @onclick="OnRegister">Register</button>
+    <br />
+    <p>@LoginStatus</p>
+</form>
+
+
+@code{
+    private string Email { get; set; } = string.Empty;
+    private string Password { get; set; } = string.Empty;
+    private string LoginStatus { get; set; } = string.Empty;
+
+
+    private async Task OnLogin()
+    {
+        var body = new
+        {
+            email = Email,
+            password = Password
+        };
+
+        var response = await Http.PostAsJsonAsync("https://localhost:7192/api/usuario/login", body);
+
+        if (response.IsSuccessStatusCode)
+        {
+            LoginStatus = "✅ Login successful!";
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            LoginStatus = $"❌ {response.StatusCode}: {error}";
+        }
+    }
+
+    private async Task OnRegister()
+    {
+        var body = new
+        {
+            Email = Email,
+            Password = Password
+        };
+
+        var response = await Http.PostAsJsonAsync("https://localhost:7192/api/Usuario/register", body);
+
+        if (response.IsSuccessStatusCode)
+        {
+            LoginStatus = "✅ Registration successful";
+        }
+        else
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            LoginStatus = $"❌ {response.StatusCode}: {error}";
+        }
+    }
+}
