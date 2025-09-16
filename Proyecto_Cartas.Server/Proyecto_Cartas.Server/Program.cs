@@ -4,6 +4,7 @@ using Proyecto_Cartas.Repositorio.Repositorios;
 using Proyecto_Cartas.Server.Client.Pages;
 using Proyecto_Cartas.Server.Components;
 using Proyecto_Cartas.BD.Datos.Entidades;
+using Proyecto_Cartas.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
 builder.Services.AddScoped<IConfiguracionUsuarioRepositorio, ConfiguracionUsuarioRepositorio>();
 builder.Services.AddScoped<IPerfilUsuarioRepositorio, PerfilUsuarioRepositorio>();
 builder.Services.AddScoped<IBilleteraRepositorio, BilleteraRepositorio>();
+builder.Services.AddScoped<SesionUsuario>();
 
 builder.Services.AddHttpClient();
 

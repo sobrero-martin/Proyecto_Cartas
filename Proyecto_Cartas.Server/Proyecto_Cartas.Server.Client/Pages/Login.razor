@@ -1,5 +1,7 @@
 ﻿@page "/login"
+@using Proyecto_Cartas.Shared
 @inject HttpClient Http
+@inject SesionUsuario Sesion
 
 <PageTitle>Login</PageTitle>
 
@@ -14,7 +16,7 @@
     <br />
     <button type="button" @onclick="OnLogin" >Login</button> <button type="button" @onclick="OnRegister">Register</button>
     <br />
-    <p>@LoginStatus</p>
+    <p style="margin: 20px">@LoginStatus</p>
 </form>
 
 
@@ -36,7 +38,13 @@
 
         if (response.IsSuccessStatusCode)
         {
+            var id = await response.Content.ReadFromJsonAsync<int>();
+            if (id != 0)
+            {
+            Sesion.UsuarioId = id;
+
             LoginStatus = "✅ Login successful!";
+            }
         }
         else
         {

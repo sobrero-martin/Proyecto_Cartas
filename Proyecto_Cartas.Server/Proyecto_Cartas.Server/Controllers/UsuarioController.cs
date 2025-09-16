@@ -20,7 +20,7 @@ namespace Proyecto_Cartas.Server.Controllers
 
 
         [HttpPost("login")]
-        public async Task<ActionResult> Login(UsuarioAuthDTO login)
+        public async Task<ActionResult<int>> Login(UsuarioAuthDTO login)
         {
             var res = await repositorio.Login(login);
 
@@ -28,7 +28,7 @@ namespace Proyecto_Cartas.Server.Controllers
                 return NotFound("Email doesn't exist or the password is incorrect");
 
 
-            return Ok("Login was succesful");
+            return Ok(res);
         }
 
         [HttpPost("register")]
