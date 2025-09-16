@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Proyecto_Cartas.BD.Datos.Entidades;
 using Proyecto_Cartas.Repositorio.Repositorios;
+using Proyecto_Cartas.Shared.DTO;
 
 namespace Proyecto_Cartas.Server.Controllers
 {
@@ -34,6 +35,19 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(list);
         }
 
+
+        [HttpGet("{userId:int}")]
+        public async Task<ActionResult<ConfiguracionUsuario>> GetById(int userId)
+        {
+            var entity = await repositorio.GetByUsuarioId(userId);
+            if (entity == null)
+            {
+                return NotFound($"No row found with ID {userId}.");
+            }
+            return Ok(entity);
+        }
+
+        /*
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ConfiguracionUsuario>> GetById(int id)
         {
@@ -43,17 +57,23 @@ namespace Proyecto_Cartas.Server.Controllers
                 return NotFound($"No row found with ID {id}.");
             }
             return Ok(entity);
-        }
-
+        } 
+        */
 
 
         [HttpPost]
-        public async Task<ActionResult<int>> Post(ConfiguracionUsuario configUsuario)
+        public async Task<ActionResult<int>> Post(ConfiguracionUsuarioDTO configUsuario)
         {
             try
             {
-                await repositorio.Post(configUsuario);
-                return Ok(configUsuario.Id);
+                var config = new ConfiguracionUsuario
+                {
+                    UsuarioID = configUsuario.UsuarioID,
+                    VolumenMusica = configUsuario.VolumenMusica,
+                    VolumenSFX = configUsuario.VolumenSFX,
+                };
+                await repositorio.Post(config);
+                return Ok(config.Id);
             }
             catch (Exception e)
             {
@@ -61,11 +81,16 @@ namespace Proyecto_Cartas.Server.Controllers
             }
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, ConfiguracionUsuario configUsuario)
+        [HttpPut]
+        public async Task<ActionResult> Put(ConfiguracionUsuarioDTO configUsuario)
         {
-            var result = await repositorio.Put(id, configUsuario);
-            return Ok($"Row with id {id} correctly updated");
+            var configExistente = await repositorio.GetById(configUsuario.UsuarioID);
+            if (configExistente == null)
+            {
+                return NotFound($"No row found with ID {configUsuario.UsuarioID} to update.");
+            }
+            var result = await repositorio.Put(configUsuario.UsuarioID, configExistente);
+            return Ok($"Row with id {configUsuario.UsuarioID} correctly updated");
         }
 
         [HttpDelete("{id:int}")]

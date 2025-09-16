@@ -76,6 +76,7 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(usuario);
         }
 
+        /*
         [HttpPost]
         public async Task<ActionResult<int>> PostUsuario(Usuario usuario)
         {
@@ -91,6 +92,7 @@ namespace Proyecto_Cartas.Server.Controllers
             }
            
         }
+        */
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult> PutUsuario(int id, Usuario usuario)

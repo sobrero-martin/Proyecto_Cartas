@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Proyecto_Cartas.BD.Datos.Entidades;
 using Proyecto_Cartas.Repositorio.Repositorios;
+using Proyecto_Cartas.Shared.DTO;
 
 namespace Proyecto_Cartas.Server.Controllers
 {
@@ -34,6 +35,19 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(list);
         }
 
+
+        [HttpGet("{userId:int}")]
+        public async Task<ActionResult<BilleteraDTO>> GetByUsuarioId(int userId)
+        {
+            var entity = await repositorio.GetByUsuarioId(userId);
+            if (entity == null)
+            {
+                return NotFound($"No row found with ID {userId}.");
+            }
+            return Ok(entity);
+        }
+
+        /*
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Billetera>> GetById(int id)
         {
@@ -44,16 +58,21 @@ namespace Proyecto_Cartas.Server.Controllers
             }
             return Ok(entity);
         }
-
+        */
 
 
         [HttpPost]
-        public async Task<ActionResult<int>> Post(Billetera billetera)
+        public async Task<ActionResult<int>> Post(BilleteraDTO billetera)
         {
             try
             {
-                await repositorio.Post(billetera);
-                return Ok(billetera.Id);
+                var nuevaBilletera = new Billetera
+                {
+                    UsuarioID = billetera.UsuarioID,
+                    cantidadMonedas = billetera.cantidadMonedas
+                };
+                int id = await repositorio.Post(nuevaBilletera);
+                return Ok(id);
             }
             catch (Exception e)
             {
@@ -61,11 +80,16 @@ namespace Proyecto_Cartas.Server.Controllers
             }
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult> Put(int id, Billetera billetera)
+        [HttpPut]
+        public async Task<ActionResult> Put(BilleteraDTO billetera)
         {
-            var result = await repositorio.Put(id, billetera);
-            return Ok($"Row with id {id} correctly updated");
+            var billeteraExistente = await repositorio.GetById(billetera.UsuarioID);
+            if (billeteraExistente == null)
+            {
+                return NotFound($"No row found with ID {billetera.UsuarioID} to update.");
+            }
+            var result = await repositorio.Put(billetera.UsuarioID, billeteraExistente);
+            return Ok($"Row with id {billetera.UsuarioID} correctly updated");
         }
 
         [HttpDelete("{id:int}")]

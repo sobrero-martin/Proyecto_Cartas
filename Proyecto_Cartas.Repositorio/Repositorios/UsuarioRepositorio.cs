@@ -49,6 +49,25 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
 
             int usuarioId = await Post(newUser);
 
+            var Billetera = new Billetera
+            {
+                UsuarioID = usuarioId,
+                cantidadMonedas = 100 
+            };
+
+            await context.Billeteras.AddAsync(Billetera);
+
+            var config = new ConfiguracionUsuario
+            {
+                UsuarioID = usuarioId,
+                VolumenMusica = 50,
+                VolumenSFX = 50,
+            };
+
+            await context.ConfiguracionesUsuario.AddAsync(config);
+
+            await context.SaveChangesAsync();
+
             return usuarioId;
         }
     }
