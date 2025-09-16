@@ -30,37 +30,17 @@ namespace Proyecto_Cartas.BD.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    NombreCarta = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    TipoCarta = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    NivelCarta = table.Column<int>(type: "int", nullable: false),
+                    Ataque = table.Column<int>(type: "int", nullable: false),
+                    Vida = table.Column<int>(type: "int", nullable: false),
+                    Velocidad = table.Column<int>(type: "int", nullable: false),
                     EstadoRegistro = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cartas", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CartasApertura",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EstadoRegistro = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CartasApertura", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CartasSobre",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    EstadoRegistro = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CartasSobre", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -124,8 +104,7 @@ namespace Proyecto_Cartas.BD.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Nombre = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     EstadoRegistro = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -144,6 +123,34 @@ namespace Proyecto_Cartas.BD.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UsuariosPartida", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CartasSobre",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CartaID = table.Column<int>(type: "int", nullable: false),
+                    SobreID = table.Column<int>(type: "int", nullable: false),
+                    ProbabilidadCartaSobre = table.Column<int>(type: "int", nullable: false),
+                    EstadoRegistro = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartasSobre", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CartasSobre_Cartas_CartaID",
+                        column: x => x.CartaID,
+                        principalTable: "Cartas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CartasSobre_Sobres_SobreID",
+                        column: x => x.SobreID,
+                        principalTable: "Sobres",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -224,6 +231,8 @@ namespace Proyecto_Cartas.BD.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UsuarioID = table.Column<int>(type: "int", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Nivel = table.Column<int>(type: "int", nullable: false),
                     Experiencia = table.Column<int>(type: "int", nullable: false),
                     PartidasJugadas = table.Column<int>(type: "int", nullable: false),
@@ -242,10 +251,58 @@ namespace Proyecto_Cartas.BD.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "CartasApertura",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompraSobreID = table.Column<int>(type: "int", nullable: false),
+                    CartaSobreID = table.Column<int>(type: "int", nullable: false),
+                    CantidadCartasObtenidas = table.Column<int>(type: "int", nullable: false),
+                    EstadoRegistro = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartasApertura", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CartasApertura_CartasSobre_CartaSobreID",
+                        column: x => x.CartaSobreID,
+                        principalTable: "CartasSobre",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CartasApertura_ComprasSobre_CompraSobreID",
+                        column: x => x.CompraSobreID,
+                        principalTable: "ComprasSobre",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Billeteras_UsuarioID",
                 table: "Billeteras",
                 column: "UsuarioID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartasApertura_CartaSobreID",
+                table: "CartasApertura",
+                column: "CartaSobreID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartasApertura_CompraSobreID",
+                table: "CartasApertura",
+                column: "CompraSobreID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartasSobre_CartaID",
+                table: "CartasSobre",
+                column: "CartaID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CartasSobre_SobreID",
+                table: "CartasSobre",
+                column: "SobreID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ComprasSobre_SobreID",
@@ -268,6 +325,12 @@ namespace Proyecto_Cartas.BD.Migrations
                 column: "UsuarioID");
 
             migrationBuilder.CreateIndex(
+                name: "PerfilesUsuario_Nombre_UQ",
+                table: "PerfilesUsuario",
+                column: "Nombre",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "Usuarios_Email_UQ",
                 table: "Usuarios",
                 column: "Email",
@@ -284,16 +347,7 @@ namespace Proyecto_Cartas.BD.Migrations
                 name: "Billeteras");
 
             migrationBuilder.DropTable(
-                name: "Cartas");
-
-            migrationBuilder.DropTable(
                 name: "CartasApertura");
-
-            migrationBuilder.DropTable(
-                name: "CartasSobre");
-
-            migrationBuilder.DropTable(
-                name: "ComprasSobre");
 
             migrationBuilder.DropTable(
                 name: "ConfiguracionesUsuario");
@@ -312,6 +366,15 @@ namespace Proyecto_Cartas.BD.Migrations
 
             migrationBuilder.DropTable(
                 name: "UsuariosPartida");
+
+            migrationBuilder.DropTable(
+                name: "CartasSobre");
+
+            migrationBuilder.DropTable(
+                name: "ComprasSobre");
+
+            migrationBuilder.DropTable(
+                name: "Cartas");
 
             migrationBuilder.DropTable(
                 name: "Sobres");

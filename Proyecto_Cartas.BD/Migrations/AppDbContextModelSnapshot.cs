@@ -70,7 +70,29 @@ namespace Proyecto_Cartas.BD.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("Ataque")
+                        .HasColumnType("int");
+
                     b.Property<int>("EstadoRegistro")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NivelCarta")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NombreCarta")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("TipoCarta")
+                        .IsRequired()
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<int>("Velocidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Vida")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -86,10 +108,23 @@ namespace Proyecto_Cartas.BD.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CantidadCartasObtenidas")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CartaSobreID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CompraSobreID")
+                        .HasColumnType("int");
+
                     b.Property<int>("EstadoRegistro")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CartaSobreID");
+
+                    b.HasIndex("CompraSobreID");
 
                     b.ToTable("CartasApertura");
                 });
@@ -102,10 +137,23 @@ namespace Proyecto_Cartas.BD.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CartaID")
+                        .HasColumnType("int");
+
                     b.Property<int>("EstadoRegistro")
                         .HasColumnType("int");
 
+                    b.Property<int>("ProbabilidadCartaSobre")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SobreID")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CartaID");
+
+                    b.HasIndex("SobreID");
 
                     b.ToTable("CartasSobre");
                 });
@@ -206,6 +254,10 @@ namespace Proyecto_Cartas.BD.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("EstadoRegistro")
                         .HasColumnType("int");
 
@@ -214,6 +266,11 @@ namespace Proyecto_Cartas.BD.Migrations
 
                     b.Property<int>("Nivel")
                         .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("PartidasGanadas")
                         .HasColumnType("int");
@@ -230,6 +287,9 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("UsuarioID");
+
+                    b.HasIndex(new[] { "Nombre" }, "PerfilesUsuario_Nombre_UQ")
+                        .IsUnique();
 
                     b.ToTable("PerfilesUsuario");
                 });
@@ -290,14 +350,10 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.Property<int>("EstadoRegistro")
                         .HasColumnType("int");
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -332,6 +388,44 @@ namespace Proyecto_Cartas.BD.Migrations
                         .IsRequired();
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.CartaApertura", b =>
+                {
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.CartaSobre", "CartaSobre")
+                        .WithMany()
+                        .HasForeignKey("CartaSobreID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.CompraSobre", "CompraSobre")
+                        .WithMany()
+                        .HasForeignKey("CompraSobreID")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("CartaSobre");
+
+                    b.Navigation("CompraSobre");
+                });
+
+            modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.CartaSobre", b =>
+                {
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.Carta", "Carta")
+                        .WithMany()
+                        .HasForeignKey("CartaID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.Sobre", "Sobre")
+                        .WithMany()
+                        .HasForeignKey("SobreID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Carta");
+
+                    b.Navigation("Sobre");
                 });
 
             modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.CompraSobre", b =>

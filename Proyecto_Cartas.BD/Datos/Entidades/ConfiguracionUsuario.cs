@@ -13,9 +13,9 @@ namespace Proyecto_Cartas.BD.Datos.Entidades
         public Usuario? Usuario { get; set; }
 
         [Required(ErrorMessage = "El volumen de musica es requerido.")]
-        public int VolumenMusica { get; set; } = 50;
+        public required int VolumenMusica { get; set; } = 50;
 
         [Required(ErrorMessage = "El volumen de sfx es requerido.")]
-        public int VolumenSFX { get; set; } = 50;
+        public required int VolumenSFX { get; set; } = 50;
     }
 }

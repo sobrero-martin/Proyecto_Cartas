@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto_Cartas.Repositorio.Repositorios
 {
-    public class UsuarioRepositorio : Repositorio<Usuario>, IRepositorio<Usuario>, IUsuarioRepositorio
+    public class UsuarioRepositorio : Repositorio<Usuario>, IUsuarioRepositorio
     {
         private readonly AppDbContext context;
 
@@ -24,15 +24,32 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return await context.Usuarios.FirstOrDefaultAsync(x => x.Email == email);
         }
 
-        public async Task<List<UsuarioListadoDTO>> GetListado()
+        public async Task<int> Login(UsuarioAuthDTO login)
         {
-            return await context.Usuarios.Select(u => new UsuarioListadoDTO
-                {
-                    Id = u.Id,
-                    Nombre = u.Nombre,
-                    Email = u.Email
-                })
-                .ToListAsync();
+            var user = await context.Usuarios.FirstOrDefaultAsync(x => x.Email == login.Email && x.PasswordHash == login.Password);
+            if (user == null) return 0;
+            return user.Id;
+        }
+
+        public async Task<bool> EmailExists(string email)
+        {
+            return await context.Usuarios.AnyAsync(x => x.Email == email);
+        }
+
+        public async Task<int> Register(UsuarioAuthDTO register)
+        {
+
+            if (await EmailExists(register.Email)) return 0;
+
+            var newUser = new Usuario
+            {
+                Email = register.Email,
+                PasswordHash = register.Password
+            };
+
+            int usuarioId = await Post(newUser);
+
+            return usuarioId;
         }
     }
 }

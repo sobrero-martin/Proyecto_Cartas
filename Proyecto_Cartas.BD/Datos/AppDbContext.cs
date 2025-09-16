@@ -32,6 +32,13 @@ namespace Proyecto_Cartas.BD.Datos
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<CartaApertura>()
+            .HasOne(ca => ca.CompraSobre)
+            .WithMany()
+            .HasForeignKey(ca => ca.CompraSobreID)
+            .OnDelete(DeleteBehavior.Restrict); 
+
             // Configure your entities here
             // Example: modelBuilder.Entity<User>().ToTable("Users");
         }

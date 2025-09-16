@@ -8,13 +8,8 @@ using System.Threading.Tasks;
 
 namespace Proyecto_Cartas.Repositorio.Repositorios
 {
-    public interface IUsuarioRepositorio : IRepositorio<Usuario>
+    public interface IPerfilUsuarioRepositorio : IRepositorio<PerfilUsuario>
     {
-        Task<Usuario?> GetByEmail(string email);
-
-        Task<int> Login(UsuarioAuthDTO login);
-
-        Task<int> Register(UsuarioAuthDTO register);
-
+        Task<PerfilUsuarioDTO?> GetPerfilByName(string nombre);
     }
 }

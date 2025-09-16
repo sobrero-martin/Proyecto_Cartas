@@ -16,10 +16,14 @@ var connectionString = builder.Configuration.GetConnectionString("ConnSqlServer"
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddScoped<IRepositorio<Usuario>, Repositorio<Usuario>>();
 builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
+builder.Services.AddScoped<IConfiguracionUsuarioRepositorio, ConfiguracionUsuarioRepositorio>();
+builder.Services.AddScoped<IPerfilUsuarioRepositorio, PerfilUsuarioRepositorio>();
+builder.Services.AddScoped<IBilleteraRepositorio, BilleteraRepositorio>();
 
 builder.Services.AddHttpClient();
+
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

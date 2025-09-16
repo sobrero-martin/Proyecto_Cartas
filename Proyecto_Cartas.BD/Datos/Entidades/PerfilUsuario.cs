@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,24 +8,26 @@ using System.Threading.Tasks;
 
 namespace Proyecto_Cartas.BD.Datos.Entidades
 {
+    [Index(nameof(Nombre), Name = "PerfilesUsuario_Nombre_UQ", IsUnique = true)]
     public class PerfilUsuario : EntidadBase
     {
         public int UsuarioID { get; set; }
         public Usuario? Usuario { get; set; }
 
-        [Required(ErrorMessage = "El nivel es requerido.")]
-        public int Nivel { get; set; } = 1;
+        [Required(ErrorMessage = "El nombre de perfil es requerido.")]
+        [MaxLength(20, ErrorMessage = "El nombre de perfil no puede exceder los 20 caracteres")]
+        public required string Nombre { get; set; }
 
-        [Required(ErrorMessage = "La experiencia es requerida.")]
-        public int Experiencia { get; set; } = 0;
+        public string Bio { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Las partidas jugadas son requeridas.")]
-        public int PartidasJugadas { get; set; } = 0;
+        public  int Nivel { get; set; } = 1;
 
-        [Required(ErrorMessage = "Las partidas ganadas son requeridas.")]
-        public int PartidasGanadas { get; set; } = 0;
+        public  int Experiencia { get; set; } = 0;
 
-        [Required(ErrorMessage = "El último login es requerido.")]
-        public DateTime UltimoLogin { get; set; } = DateTime.UtcNow;
+        public  int PartidasJugadas { get; set; } = 0;
+
+        public  int PartidasGanadas { get; set; } = 0;
+
+        public  DateTime UltimoLogin { get; set; } = DateTime.UtcNow;
     }
 }

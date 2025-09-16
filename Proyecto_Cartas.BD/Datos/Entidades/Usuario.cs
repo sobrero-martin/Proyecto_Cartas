@@ -15,11 +15,8 @@ namespace Proyecto_Cartas.BD.Datos.Entidades
         [MaxLength(255, ErrorMessage = "El email no puede exceder los 255 caracteres")]
         public required string Email { get; set; }
 
-        [Required(ErrorMessage = "El nombre de usuario es requerido.")]
-        [MaxLength(20, ErrorMessage = "El nombre de usuario no puede exceder los 20 caracteres")]
-        public required string Nombre { get; set; }
-
         [Required(ErrorMessage = "La contraseña es requerida.")]
+        [MaxLength(20, ErrorMessage = "La contraseña no puede exceder los 20 caracteres")]
         public required string PasswordHash { get; set; }
 
     }

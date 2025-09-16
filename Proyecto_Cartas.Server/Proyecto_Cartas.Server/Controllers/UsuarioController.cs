@@ -18,6 +18,30 @@ namespace Proyecto_Cartas.Server.Controllers
             this.repositorio = repositorio;
         }
 
+
+        [HttpPost("login")]
+        public async Task<ActionResult> Login(UsuarioAuthDTO login)
+        {
+            var res = await repositorio.Login(login);
+
+            if (res == 0)
+                return NotFound("Email doesn't exist or the password is incorrect");
+
+
+            return Ok("Login was succesful");
+        }
+
+        [HttpPost("register")]
+        public async Task<ActionResult> Register(UsuarioAuthDTO dto)
+        {
+            var usuarioId = await repositorio.Register(dto);
+
+            if (usuarioId == 0)
+                return BadRequest("El email ya está registrado");
+
+            return Ok("Usuario registrado correctamente");
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<Usuario>>>  GetUsuarios()
         {
@@ -38,25 +62,7 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(usuarios);
         }
 
-        [HttpGet("lista")] // api/usuario/lista
-        public async Task<ActionResult<List<UsuarioListadoDTO>>> GetLista()
-        {
-            //var usuarios = await context.Usuarios.ToListAsync();
-
-            var lista = await repositorio.GetListado();
-
-            if (lista == null)
-            {
-                return NotFound("No se encontraron usuarios(NULL).");
-            }
-
-            if (lista.Count == 0)
-            {
-                return Ok("No existen usuarios.");
-            }
-
-            return Ok(lista);
-        }
+        
 
         [HttpGet("{id:int}")] 
         public async Task<ActionResult<Usuario>> GetUsuario(int id)

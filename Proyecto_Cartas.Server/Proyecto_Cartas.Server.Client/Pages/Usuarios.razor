@@ -5,15 +5,16 @@
 <PageTitle>Usuarios</PageTitle>
 
 <h1>Usuarios</h1>
-
+<!--
 @if (usuarioLista == null)
 {
     <p><em>Cargando...</em></p>
     return;
 }
-
+-->
 
 <p>
+    <!--
     @foreach (var usuario in usuarioLista)
     {
         <div>
@@ -25,17 +26,19 @@
         <div>
             <strong>Email:</strong> @usuario.Email
         </div>
-        <hr />
+        <hr/>
     }
-
+    -->
 </p>
 
 
 @code {
-   private List<UsuarioListadoDTO>? usuarioLista;
+    
+   //private List<UsuarioListadoDTO>? usuarioLista;
 
+   /*
    protected override async Task OnInitializedAsync()
     {
-        usuarioLista = await Http.GetFromJsonAsync<List<UsuarioListadoDTO>>("https://localhost:7192/api/usuario/lista");
-    }
+        usuarioLista = await Http.GetFromJsonAsync<List<UsuarioListadoDTO>>("https://localhost:7192/api/usuario/lista");  
+    }*/
 }
