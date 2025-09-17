@@ -12,7 +12,6 @@ namespace Proyecto_Cartas.BD.Datos.Entidades
         [Required(ErrorMessage = "El estado es obligatorio.")]
         public required string Estado { get; set; }
 
-
         public DateTime FechaCreacion { get; set; }
 
         [Required(ErrorMessage = "El Ganador es obligatorio.")]

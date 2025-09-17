@@ -2,7 +2,7 @@
 
 namespace Proyecto_Cartas.Repositorio.Repositorios
 {
-    internal interface IInventarioRepositorio : IRepositorio<Inventario>
+    public interface IInventarioRepositorio : IRepositorio<Inventario>
     {
     }
 }

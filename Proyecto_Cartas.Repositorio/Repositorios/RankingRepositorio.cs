@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto_Cartas.Repositorio.Repositorios
 {
-    internal class RankingRepositorio : Repositorio<Ranking>, IRankingRepositorio
+    public class RankingRepositorio : Repositorio<Ranking>, IRankingRepositorio
     {
         private readonly AppDbContext context;
 

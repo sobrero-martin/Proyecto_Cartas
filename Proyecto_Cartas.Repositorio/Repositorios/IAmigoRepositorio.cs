@@ -1,4 +1,5 @@
 ﻿using Proyecto_Cartas.BD.Datos.Entidades;
+using Proyecto_Cartas.Shared.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,9 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
     {
         Task AddAmigo(Amigo amigo);
         Task DeleteAmigo(int id);
-        Task<IEnumerable<Amigo>> GetAllAsync();
+        Task<IEnumerable<Amigo>> GetAll();
         Task<List<Amigo>> GetAmigosPorUsuario(int usuarioId);
-        Task<Amigo?> GetByIdAsync(int id);
+        Task<AmigoDTO?> GetPerfilById(int id);
+        Task<Amigo?> GetPorId(int id);
     }
 }

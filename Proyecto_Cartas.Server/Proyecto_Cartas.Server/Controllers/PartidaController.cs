@@ -10,10 +10,10 @@ namespace Proyecto_Cartas.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class InventarioController : ControllerBase
+    public class PartidaController : ControllerBase
     {
-        private readonly IInventarioRepositorio repositorio;
-        public InventarioController(IInventarioRepositorio repositorio)
+        private readonly IPartidaRepositorio repositorio;
+        public PartidaController(IPartidaRepositorio repositorio)
         {
             this.repositorio = repositorio;
         }
@@ -23,37 +23,37 @@ namespace Proyecto_Cartas.Server.Controllers
         {
             var entities = await repositorio.GetFull();
 
-            var result = entities.Select(i => new InventarioDTO
+            var result = entities.Select(p => new PartidaDTO
             {
-                UsuarioId = i.UsuarioID,
-                CartaId = i.CartaID
+                Estado = p.Estado,
+                Ganador = p.Ganador
             });
 
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(InventarioDTO dto)
+        public async Task<IActionResult> Create(PartidaDTO dto)
         {
-            var inventario = new Inventario
+            var partida = new Partida
             {
-                UsuarioID = dto.UsuarioId,
-                CartaID = dto.CartaId
+                Estado = dto.Estado,
+                Ganador = dto.Ganador
             };
 
-            await repositorio.Post(inventario);
+            await repositorio.Post(partida);
 
-            return CreatedAtAction(nameof(GetAll), new { id = inventario.Id }, inventario);
+            return CreatedAtAction(nameof(GetAll), new { id = partida.Id }, partida);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, InventarioDTO dto)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(int id, PartidaDTO dto)
         {
             var entity = await repositorio.GetById(id);
             if (entity == null) return NotFound();
 
-            entity.UsuarioID = dto.UsuarioId;
-            entity.CartaID = dto.CartaId;
+            entity.Estado = dto.Estado;
+            entity.Ganador = dto.Ganador;
 
             await repositorio.Post(entity);
 

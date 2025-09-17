@@ -23,6 +23,10 @@ builder.Services.AddScoped<IPerfilUsuarioRepositorio, PerfilUsuarioRepositorio>(
 builder.Services.AddScoped<IBilleteraRepositorio, BilleteraRepositorio>();
 
 builder.Services.AddScoped<IAmigoRepositorio, AmigoRepositorio>();
+builder.Services.AddScoped<IRankingRepositorio, RankingRepositorio>();
+builder.Services.AddScoped<IPartidaRepositorio, PartidaRepositorio>();
+builder.Services.AddScoped<IUsuarioPartidaRepositorio, UsuarioPartidaRepositorio>();
+builder.Services.AddScoped<IInventarioRepositorio, InventarioRepositorio>();
 
 builder.Services.AddScoped<SesionUsuario>();
 

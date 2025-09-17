@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 namespace Proyecto_Cartas.Repositorio.Repositorios
 {
-    internal class UsuarioPartidaRepositorio : Repositorio<UsuarioPartida>, IUsuarioPartidaRepositorio
+    public class UsuarioPartidaRepositorio : Repositorio<UsuarioPartida>, IUsuarioPartidaRepositorio
     {
         private readonly AppDbContext context;
 

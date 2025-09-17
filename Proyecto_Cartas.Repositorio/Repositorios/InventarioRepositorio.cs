@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Proyecto_Cartas.Repositorio.Repositorios
 {
-    internal class InventarioRepositorio : Repositorio<Inventario>, IInventarioRepositorio
+    public class InventarioRepositorio : Repositorio<Inventario>, IInventarioRepositorio
     {
         private readonly AppDbContext context;
         public InventarioRepositorio(AppDbContext context) : base(context)

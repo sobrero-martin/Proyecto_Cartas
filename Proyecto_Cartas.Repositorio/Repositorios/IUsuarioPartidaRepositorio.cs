@@ -2,7 +2,7 @@
 
 namespace Proyecto_Cartas.Repositorio.Repositorios
 {
-    internal interface IUsuarioPartidaRepositorio : IRepositorio<UsuarioPartida>
+    public interface IUsuarioPartidaRepositorio : IRepositorio<UsuarioPartida>
     {
     }
 }

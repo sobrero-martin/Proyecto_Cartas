@@ -22,7 +22,7 @@ namespace Proyecto_Cartas.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<List<Amigo>>> GetAmigos()
         {
-            var amigos = await repositorio.GetAllAsync();
+            var amigos = await repositorio.GetAll();
             if (amigos == null)
             {
                 return NotFound("No se encontraron amigos(NULL).");
@@ -33,19 +33,19 @@ namespace Proyecto_Cartas.Server.Controllers
             }
             return Ok(amigos);
         }
-
+        /*
         [HttpGet("{id}")]
         public async Task<ActionResult<Amigo>> GetAmigo(int id)
         {
-            var amigo = await repositorio.GetByIdAsync(id);
+            var amigo = await repositorio.GetPorId(id);
             if (amigo == null)
             {
                 return NotFound($"No se encontró el amigo con ID {id}.");
             }
             return Ok(amigo);
         }
-
-        [HttpGet("usuario/{usuarioId}")]
+        */
+        [HttpGet("usuario/{usuarioId:int}")]
         public async Task<ActionResult<List<Amigo>>> GetAmigosPorUsuario(int usuarioId)
         {
             var amigos = await repositorio.GetAmigosPorUsuario(usuarioId);
@@ -56,8 +56,19 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(amigos);
         }
 
-        [HttpPost]
-        public async Task<ActionResult> AddAmigo([FromBody] AmigoDTO dto)
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<AmigoDTO>> GetByName(int id)
+        {
+            var perfil = await repositorio.GetPerfilById(id);
+            if (perfil == null)
+            {
+                return NotFound($"No profile found with name {id}.");
+            }
+            return Ok(perfil);
+        }
+
+            [HttpPost]
+        public async Task<ActionResult> AddAmigo(AmigoDTO dto)
         {
             var amigo = new Amigo
             {
@@ -67,13 +78,13 @@ namespace Proyecto_Cartas.Server.Controllers
             };
 
             await repositorio.AddAmigo(amigo);
-            return CreatedAtAction(nameof(GetAmigo), new { id = amigo.Id }, amigo);
+            return CreatedAtAction(nameof(GetAmigos), new { id = amigo.Id }, amigo);
         }
 
         [HttpDelete]
         public async Task<ActionResult> DeleteAmigo(int id)
         {
-            var existingAmigo = await repositorio.GetByIdAsync(id);
+            var existingAmigo = await repositorio.GetPorId(id);
             if (existingAmigo == null)
             {
                 return NotFound($"No se encontró el amigo con ID {id}.");
@@ -88,5 +99,6 @@ namespace Proyecto_Cartas.Server.Controllers
                 return StatusCode(500, $"Error al eliminar el amigo: {ex.Message}");
             }
         }
+
     }
 }

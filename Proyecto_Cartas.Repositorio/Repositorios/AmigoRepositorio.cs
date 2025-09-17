@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Proyecto_Cartas.Shared.DTO;
 
 namespace Proyecto_Cartas.Repositorio.Repositorios
 {
@@ -20,10 +21,10 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             this.context = context;
         }
 
-        public async Task<IEnumerable<Amigo>> GetAllAsync()
+        public async Task<IEnumerable<Amigo>> GetAll()
         => await context.Set<Amigo>().ToListAsync();
 
-        public async Task<Amigo?> GetByIdAsync(int id)
+        public async Task<Amigo?> GetPorId(int id)
             => await context.Set<Amigo>().FindAsync(id);
 
         public async Task<List<Amigo>> GetAmigosPorUsuario(int usuarioId)
@@ -41,12 +42,25 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
 
         public async Task DeleteAmigo(int id)
         {
-            var entity = await GetByIdAsync(id);
+            var entity = await GetPorId(id);
             if (entity != null)
             {
                 context.Set<Amigo>().Remove(entity);
                 await context.SaveChangesAsync();
             }
+        }
+
+        public async Task<AmigoDTO?> GetPerfilById(int id)
+        {
+            return await context.Amigos
+                .Where(a => a.Id == id)
+                .Select(a => new AmigoDTO
+                {
+                    UsuarioId2 = a.UsuarioId2,
+                    Estado = a.Estado,
+                    Fecha = a.Fecha
+                })
+                .FirstOrDefaultAsync();
         }
     }
 }

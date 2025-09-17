@@ -17,7 +17,7 @@ namespace Proyecto_Cartas.Server.Controllers
         {
             this.repositorio = repositorio;
         }
-
+        
         [HttpGet]
         public async Task<ActionResult<List<Ranking>>> GetRankings()
         {
@@ -45,7 +45,7 @@ namespace Proyecto_Cartas.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddRanking([FromBody] RankingDTO dto)
+        public async Task<ActionResult> AddRanking(RankingDTO dto)
         {
             if (dto == null)
             {
@@ -69,7 +69,7 @@ namespace Proyecto_Cartas.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateRanking(int id, [FromBody] RankingDTO dto)
+        public async Task<ActionResult> UpdateRanking(int id, RankingDTO dto)
         {
             if (dto == null)
             {
@@ -96,6 +96,7 @@ namespace Proyecto_Cartas.Server.Controllers
             {
                 return StatusCode(500, $"Error al actualizar el ranking: {ex.Message}");
             }
+        
         }
     }
 }
