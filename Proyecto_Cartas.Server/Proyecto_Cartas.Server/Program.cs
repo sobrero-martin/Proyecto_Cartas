@@ -20,6 +20,7 @@ builder.Services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
 builder.Services.AddScoped<IConfiguracionUsuarioRepositorio, ConfiguracionUsuarioRepositorio>();
 builder.Services.AddScoped<IPerfilUsuarioRepositorio, PerfilUsuarioRepositorio>();
 builder.Services.AddScoped<IBilleteraRepositorio, BilleteraRepositorio>();
+builder.Services.AddScoped<IAmigoRepositorio, AmigoRepositorio>();
 
 builder.Services.AddHttpClient();
 
