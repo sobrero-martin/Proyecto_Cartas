@@ -1,5 +1,7 @@
-﻿using Proyecto_Cartas.BD.Datos;
+﻿using Microsoft.EntityFrameworkCore;
+using Proyecto_Cartas.BD.Datos;
 using Proyecto_Cartas.BD.Datos.Entidades;
+using Proyecto_Cartas.Shared.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +17,18 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         public BilleteraRepositorio(AppDbContext context) : base(context)
         {
             this.context = context;
+        }
+
+        public async Task<BilleteraDTO?> GetByUsuarioId(int usuarioId)
+        {
+            return await context.Billeteras
+                .Where(b => b.UsuarioID == usuarioId)
+                .Select(p => new BilleteraDTO
+                {
+                   UsuarioID = p.UsuarioID,
+                   cantidadMonedas = p.cantidadMonedas
+                })
+                .FirstOrDefaultAsync();
         }
 
     }

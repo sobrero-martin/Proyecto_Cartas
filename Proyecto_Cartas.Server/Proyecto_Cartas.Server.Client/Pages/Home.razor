@@ -1,7 +1,18 @@
 ﻿@page "/"
+@using Proyecto_Cartas.Shared
+@inject SesionUsuario Sesion
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+@if (Sesion.UsuarioId != 0)
+{
+    <p>Logged in as user with ID: @Sesion.UsuarioId</p>
+}
+else
+{
+    <p>You are not logged in. Please <a href="/login">login</a>.</p>
+}
