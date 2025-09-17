@@ -24,7 +24,7 @@ builder.Services.AddScoped<IBilleteraRepositorio, BilleteraRepositorio>();
 
 builder.Services.AddScoped<IAmigoRepositorio, AmigoRepositorio>();
 
-
+builder.Services.AddScoped<SesionUsuario>();
 
 builder.Services.AddHttpClient();
 
