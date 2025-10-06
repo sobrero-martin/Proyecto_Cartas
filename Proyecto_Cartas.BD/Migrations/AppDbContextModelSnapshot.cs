@@ -237,6 +237,83 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.ToTable("ConfiguracionesUsuario");
                 });
 
+            modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.EstadoCarta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Ataque")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EstadoRegistro")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InventarioID")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Posicion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UsuarioPartidaID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Velocidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Vida")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InventarioID");
+
+                    b.HasIndex("UsuarioPartidaID");
+
+                    b.ToTable("EstadosCarta");
+                });
+
+            modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.Evento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Accion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Destino")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EstadoCartaID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EstadoRegistro")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Origen")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TurnoID")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EstadoCartaID");
+
+                    b.HasIndex("TurnoID");
+
+                    b.ToTable("Eventos");
+                });
+
             modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.Inventario", b =>
                 {
                     b.Property<int>("Id")
@@ -393,6 +470,34 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.ToTable("Sobres");
                 });
 
+            modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.Turno", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EstadoRegistro")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Fase")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Numero")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuarioPartidaID")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioPartidaID");
+
+                    b.ToTable("Turnos");
+                });
+
             modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -433,20 +538,23 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.Property<bool>("Aceptado")
                         .HasColumnType("bit");
 
+                    b.Property<int>("CartasPerdidas")
+                        .HasColumnType("int");
+
                     b.Property<int>("EstadoRegistro")
                         .HasColumnType("int");
 
                     b.Property<int>("PartidaID")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsuarioID")
+                    b.Property<int>("PerfilUsuarioID")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PartidaID");
 
-                    b.HasIndex("UsuarioID");
+                    b.HasIndex("PerfilUsuarioID");
 
                     b.ToTable("UsuariosPartida");
                 });
@@ -545,6 +653,44 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.EstadoCarta", b =>
+                {
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.Inventario", "Inventario")
+                        .WithMany()
+                        .HasForeignKey("InventarioID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.UsuarioPartida", "UsuarioPartida")
+                        .WithMany()
+                        .HasForeignKey("UsuarioPartidaID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Inventario");
+
+                    b.Navigation("UsuarioPartida");
+                });
+
+            modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.Evento", b =>
+                {
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.EstadoCarta", "EstadoCarta")
+                        .WithMany()
+                        .HasForeignKey("EstadoCartaID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.Turno", "Turno")
+                        .WithMany()
+                        .HasForeignKey("TurnoID")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("EstadoCarta");
+
+                    b.Navigation("Turno");
+                });
+
             modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.Inventario", b =>
                 {
                     b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.Carta", "Carta")
@@ -586,6 +732,17 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.Turno", b =>
+                {
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.UsuarioPartida", "UsuarioPartida")
+                        .WithMany()
+                        .HasForeignKey("UsuarioPartidaID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("UsuarioPartida");
+                });
+
             modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.UsuarioPartida", b =>
                 {
                     b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.Partida", "Partida")
@@ -594,15 +751,15 @@ namespace Proyecto_Cartas.BD.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.Usuario", "Usuario")
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.PerfilUsuario", "PerfilUsuario")
                         .WithMany()
-                        .HasForeignKey("UsuarioID")
+                        .HasForeignKey("PerfilUsuarioID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Partida");
 
-                    b.Navigation("Usuario");
+                    b.Navigation("PerfilUsuario");
                 });
 #pragma warning restore 612, 618
         }

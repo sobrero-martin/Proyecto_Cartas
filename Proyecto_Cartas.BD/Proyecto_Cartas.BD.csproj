@@ -18,4 +18,8 @@
     <ProjectReference Include="..\Proyecto_Cartas.Shared\Proyecto_Cartas.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

@@ -8,8 +8,8 @@ namespace Proyecto_Cartas.BD.Datos.Entidades
 {
     public class UsuarioPartida : EntidadBase
     {
-        public int UsuarioID { get; set; }
-        public Usuario? Usuario { get; set; }
+        public int PerfilUsuarioID { get; set; }
+        public PerfilUsuario? PerfilUsuario { get; set; }
 
 
         public int PartidaID { get; set; }
@@ -17,5 +17,7 @@ namespace Proyecto_Cartas.BD.Datos.Entidades
 
 
         public bool Aceptado { get; set; }
+
+        public int CartasPerdidas { get; set; } = 0;
     }
 }

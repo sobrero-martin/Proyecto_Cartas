@@ -28,6 +28,10 @@ builder.Services.AddScoped<IPartidaRepositorio, PartidaRepositorio>();
 builder.Services.AddScoped<IUsuarioPartidaRepositorio, UsuarioPartidaRepositorio>();
 builder.Services.AddScoped<IInventarioRepositorio, InventarioRepositorio>();
 
+builder.Services.AddScoped<ITurnoRepositorio, TurnoRepositorio>();
+builder.Services.AddScoped<IEventoRepositorio, EventoRepositorio>();
+builder.Services.AddScoped<IEstadoCartaRepositorio, EstadoCartaRepositorio>();
+
 builder.Services.AddScoped<SesionUsuario>();
 
 builder.Services.AddHttpClient();

@@ -25,7 +25,7 @@ namespace Proyecto_Cartas.Server.Controllers
 
             var result = entities.Select(up => new UsuarioPartidaDTO
             {
-                UsuarioId = up.UsuarioID,
+                PerfilUsuarioId = up.PerfilUsuarioID,
                 Aceptado = up.Aceptado
             });
 
@@ -37,7 +37,7 @@ namespace Proyecto_Cartas.Server.Controllers
         {
             var usuarioPartida = new UsuarioPartida
             {
-                UsuarioID = dto.UsuarioId,
+                PerfilUsuarioID = dto.PerfilUsuarioId,
                 Aceptado = dto.Aceptado
             };
 

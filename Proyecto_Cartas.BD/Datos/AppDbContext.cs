@@ -24,6 +24,9 @@ namespace Proyecto_Cartas.BD.Datos
         public DbSet<Sobre> Sobres { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<UsuarioPartida> UsuariosPartida { get; set; }
+        public DbSet<Turno> Turnos { get; set; }
+        public DbSet<EstadoCarta> EstadosCarta { get; set; }
+        public DbSet<Evento> Eventos { get; set; }
 
         public AppDbContext(DbContextOptions options) : base(options)
         {
@@ -37,7 +40,31 @@ namespace Proyecto_Cartas.BD.Datos
             .HasOne(ca => ca.CompraSobre)
             .WithMany()
             .HasForeignKey(ca => ca.CompraSobreID)
-            .OnDelete(DeleteBehavior.Restrict); 
+            .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<EstadoCarta>()
+            .HasOne(e => e.UsuarioPartida)
+            .WithMany()
+            .HasForeignKey(e => e.UsuarioPartidaID)
+            .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<EstadoCarta>()
+            .HasOne(e => e.Inventario)
+            .WithMany()
+            .HasForeignKey(e => e.InventarioID)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Evento>()
+            .HasOne(e => e.Turno)
+            .WithMany()
+            .HasForeignKey(e => e.TurnoID)
+            .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Evento>()
+            .HasOne(e => e.EstadoCarta)
+            .WithMany()
+            .HasForeignKey(e => e.EstadoCartaID)
+            .OnDelete(DeleteBehavior.Cascade);
 
             // Configure your entities here
             // Example: modelBuilder.Entity<User>().ToTable("Users");

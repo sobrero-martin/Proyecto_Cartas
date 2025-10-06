@@ -8,7 +8,7 @@ namespace Proyecto_Cartas.Shared.DTO
 {
     public class UsuarioPartidaDTO
     {
-        public int UsuarioId { get; set; }
+        public int PerfilUsuarioId { get; set; }
         public bool Aceptado { get; set; }
     }
 }
