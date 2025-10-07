@@ -32,6 +32,12 @@ builder.Services.AddScoped<ITurnoRepositorio, TurnoRepositorio>();
 builder.Services.AddScoped<IEventoRepositorio, EventoRepositorio>();
 builder.Services.AddScoped<IEstadoCartaRepositorio, EstadoCartaRepositorio>();
 
+builder.Services.AddScoped<ICartaRepositorio, CartaRepositorio>();
+builder.Services.AddScoped<ISobreRepositorio, SobreRepositorio>();
+builder.Services.AddScoped<ICartaSobreRepositorio, CartaSobreRepositorio>();
+builder.Services.AddScoped<ICompraSobreRepositorio, CompraSobreRepositorio>();
+builder.Services.AddScoped<ICartaAperturaRepositorio, CartaAperturaRepositorio>();
+
 builder.Services.AddScoped<SesionUsuario>();
 
 builder.Services.AddHttpClient();
