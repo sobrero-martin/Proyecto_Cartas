@@ -195,17 +195,17 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.Property<DateTime>("FechaCompra")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("SobreID")
+                    b.Property<int>("PerfilUsuarioID")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsuarioID")
+                    b.Property<int>("SobreID")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SobreID");
+                    b.HasIndex("PerfilUsuarioID");
 
-                    b.HasIndex("UsuarioID");
+                    b.HasIndex("SobreID");
 
                     b.ToTable("ComprasSobre");
                 });
@@ -358,9 +358,8 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Ganador")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("Ganador")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -625,21 +624,21 @@ namespace Proyecto_Cartas.BD.Migrations
 
             modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.CompraSobre", b =>
                 {
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.PerfilUsuario", "PerfilUsuario")
+                        .WithMany()
+                        .HasForeignKey("PerfilUsuarioID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.Sobre", "Sobre")
                         .WithMany()
                         .HasForeignKey("SobreID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("PerfilUsuario");
 
                     b.Navigation("Sobre");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.ConfiguracionUsuario", b =>

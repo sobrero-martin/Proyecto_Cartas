@@ -38,7 +38,7 @@ namespace Proyecto_Cartas.BD.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Estado = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FechaCreacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Ganador = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Ganador = table.Column<int>(type: "int", nullable: true),
                     EstadoRegistro = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -155,34 +155,6 @@ namespace Proyecto_Cartas.BD.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ComprasSobre",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UsuarioID = table.Column<int>(type: "int", nullable: false),
-                    SobreID = table.Column<int>(type: "int", nullable: false),
-                    FechaCompra = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EstadoRegistro = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ComprasSobre", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ComprasSobre_Sobres_SobreID",
-                        column: x => x.SobreID,
-                        principalTable: "Sobres",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ComprasSobre_Usuarios_UsuarioID",
-                        column: x => x.UsuarioID,
-                        principalTable: "Usuarios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ConfiguracionesUsuario",
                 columns: table => new
                 {
@@ -282,31 +254,31 @@ namespace Proyecto_Cartas.BD.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CartasApertura",
+                name: "ComprasSobre",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CompraSobreID = table.Column<int>(type: "int", nullable: false),
-                    CartaSobreID = table.Column<int>(type: "int", nullable: false),
-                    CantidadCartasObtenidas = table.Column<int>(type: "int", nullable: false),
+                    PerfilUsuarioID = table.Column<int>(type: "int", nullable: false),
+                    SobreID = table.Column<int>(type: "int", nullable: false),
+                    FechaCompra = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EstadoRegistro = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CartasApertura", x => x.Id);
+                    table.PrimaryKey("PK_ComprasSobre", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CartasApertura_CartasSobre_CartaSobreID",
-                        column: x => x.CartaSobreID,
-                        principalTable: "CartasSobre",
+                        name: "FK_ComprasSobre_PerfilesUsuario_PerfilUsuarioID",
+                        column: x => x.PerfilUsuarioID,
+                        principalTable: "PerfilesUsuario",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CartasApertura_ComprasSobre_CompraSobreID",
-                        column: x => x.CompraSobreID,
-                        principalTable: "ComprasSobre",
+                        name: "FK_ComprasSobre_Sobres_SobreID",
+                        column: x => x.SobreID,
+                        principalTable: "Sobres",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -336,6 +308,34 @@ namespace Proyecto_Cartas.BD.Migrations
                         principalTable: "PerfilesUsuario",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CartasApertura",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CompraSobreID = table.Column<int>(type: "int", nullable: false),
+                    CartaSobreID = table.Column<int>(type: "int", nullable: false),
+                    CantidadCartasObtenidas = table.Column<int>(type: "int", nullable: false),
+                    EstadoRegistro = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CartasApertura", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CartasApertura_CartasSobre_CartaSobreID",
+                        column: x => x.CartaSobreID,
+                        principalTable: "CartasSobre",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CartasApertura_ComprasSobre_CompraSobreID",
+                        column: x => x.CompraSobreID,
+                        principalTable: "ComprasSobre",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -455,14 +455,14 @@ namespace Proyecto_Cartas.BD.Migrations
                 column: "SobreID");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ComprasSobre_PerfilUsuarioID",
+                table: "ComprasSobre",
+                column: "PerfilUsuarioID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ComprasSobre_SobreID",
                 table: "ComprasSobre",
                 column: "SobreID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ComprasSobre_UsuarioID",
-                table: "ComprasSobre",
-                column: "UsuarioID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ConfiguracionesUsuario_UsuarioID",

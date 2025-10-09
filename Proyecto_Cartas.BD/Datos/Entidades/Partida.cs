@@ -14,7 +14,6 @@ namespace Proyecto_Cartas.BD.Datos.Entidades
 
         public DateTime FechaCreacion { get; set; }
 
-        [Required(ErrorMessage = "El Ganador es obligatorio.")]
-        public required string Ganador { get; set; }
+        public int? Ganador { get; set; }
     }
 }

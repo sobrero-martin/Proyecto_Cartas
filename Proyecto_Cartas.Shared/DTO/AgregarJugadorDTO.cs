@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Proyecto_Cartas.Shared.DTO
 {
-    public class PartidaDTO
+    public class AgregarJugadorDTO
     {
-
-        public string Estado { get; set; } = string.Empty;
-        public int? Ganador { get; set; }
+        public int PerfilUsuarioId { get; set; }
     }
 }
