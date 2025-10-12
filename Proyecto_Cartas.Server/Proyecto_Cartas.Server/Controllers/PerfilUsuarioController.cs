@@ -28,6 +28,17 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(perfil);
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<PerfilUsuarioDTO>> GetByUserId(int id)
+        {
+            var perfil = await repositorio.GetPerfilByUserId(id);
+            if (perfil == null)
+            {
+                return NotFound($"No profile found with id {id}.");
+            }
+            return Ok(perfil);
+        }
+
         [HttpPut("userEdit")]
         public async Task<ActionResult> EditProfile(PerfilUsuarioCreateDTO dto)
         {

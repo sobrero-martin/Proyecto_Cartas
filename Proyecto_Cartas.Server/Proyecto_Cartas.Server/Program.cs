@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Proyecto_Cartas.BD.Datos;
+using Proyecto_Cartas.BD.Datos.Entidades;
 using Proyecto_Cartas.Repositorio.Repositorios;
 using Proyecto_Cartas.Server.Client.Pages;
 using Proyecto_Cartas.Server.Components;
-using Proyecto_Cartas.BD.Datos.Entidades;
+using Proyecto_Cartas.Server.Hubs;
+using Proyecto_Cartas.Servicio.ServiciosHttp;
 using Proyecto_Cartas.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,10 +41,9 @@ builder.Services.AddScoped<ICompraSobreRepositorio, CompraSobreRepositorio>();
 builder.Services.AddScoped<ICartaAperturaRepositorio, CartaAperturaRepositorio>();
 
 builder.Services.AddScoped<SesionUsuario>();
+builder.Services.AddScoped<IHttpServicio, HttpServicio>();
 
 builder.Services.AddHttpClient();
-
-
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -76,6 +77,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Proyecto_Cartas.Server.Client._Imports).Assembly);
 
+app.MapHub<JuegoHub>("/juegoHub");
 app.MapControllers();
 
 app.Run();

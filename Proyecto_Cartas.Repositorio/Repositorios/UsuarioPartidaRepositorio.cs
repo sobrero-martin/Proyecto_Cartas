@@ -29,7 +29,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 PartidaID = partida.Id,
                 PerfilUsuarioID = jugadorId,
                 CartasPerdidas = 0,
-                Aceptado = true
+                Aceptado = false
             };
 
             context.UsuariosPartida.Add(usuarioPartida);
@@ -39,7 +39,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
 
             if (cantidad >= 2)
             {
-                await partidaRepositorio.ActualizarEstadoPartida(partida.Id, "EnProgreso");
+                await partidaRepositorio.ActualizarEstadoPartida(partida.Id, "PorConfirmar");
             }
         }
 
@@ -72,7 +72,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         {
             var usuarioPartida = await context.UsuariosPartida
                 .Include(p => p.Partida)
-                .Where(p => p.PerfilUsuarioID == perfilUsuarioId && p.Partida != null && (p.Partida.Estado == "Buscando" || p.Partida.Estado == "EnProgreso"))
+                .Where(p => p.PerfilUsuarioID == perfilUsuarioId && p.Partida != null && (p.Partida.Estado == "Buscando" || p.Partida.Estado == "EnProgreso" || p.Partida.Estado == "PorConfirmar"))
                 .FirstOrDefaultAsync();
 
             if (usuarioPartida == null)
@@ -93,10 +93,72 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 partida.Estado = "Finalizada";
                 partida.Ganador = rival?.PerfilUsuarioID;
             }
+            else if (partida?.Estado == "PorConfirmar")
+            {
+                context.Partidas.Remove(partida);
+                context.UsuariosPartida.Remove(usuarioPartida);
+            }
 
-            await context.SaveChangesAsync();
+                await context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<bool> ConfirmarPartida(int perfilUsuarioId)
+        {
+            var usuarioPartida = await context.UsuariosPartida
+                                .Include(p => p.Partida)
+                                .Where(p => p.PerfilUsuarioID == perfilUsuarioId && p.Partida != null && (p.Partida.Estado == "PorConfirmar"))
+                                .FirstOrDefaultAsync();
+
+            if (usuarioPartida == null) return false;
+
+            usuarioPartida.Aceptado = true;
+            await context.SaveChangesAsync();
+            
+            var jugadores = await ObtenerJugadoresEnPartida(usuarioPartida.PartidaID);
+            if (jugadores.All(j => j.Aceptado))
+            {
+                usuarioPartida.Partida!.Estado = "EnProgreso";
+                await context.SaveChangesAsync();
+            }
+            return true;
+        }
+
+        public async Task<RevisarEstadoDTO?> RevisarPartidaEncontrada(int perfilUsuarioId)
+        {
+            var partida = await context.UsuariosPartida
+                          .Include(p => p.Partida)
+                          .Where(p => p.PerfilUsuarioID == perfilUsuarioId && p.Partida != null && p.Partida.Estado == "PorConfirmar")
+                          .FirstOrDefaultAsync();
+
+            if (partida == null)
+            {
+                return null;
+            }
+
+            var perfilUsuarioRivalId = await context.UsuariosPartida
+                                        .Where(p => p.PartidaID == partida.PartidaID && p.PerfilUsuarioID != perfilUsuarioId)
+                                        .Select(p => p.PerfilUsuarioID)
+                                        .FirstOrDefaultAsync();
+
+            return new RevisarEstadoDTO
+            {
+                PartidaId = partida.PartidaID,
+                PerfilUsuarioId = partida.PerfilUsuarioID,
+
+                Nombre = await context.PerfilesUsuario
+                          .Where(p => p.Id == perfilUsuarioId)
+                          .Select(p => p.Nombre)
+                          .FirstOrDefaultAsync() ?? string.Empty,
+
+                PerfilUsuarioRivalId = perfilUsuarioRivalId,
+
+                NombreRival = await context.PerfilesUsuario
+                               .Where(p => p.Id == perfilUsuarioRivalId)
+                               .Select(p => p.Nombre)
+                               .FirstOrDefaultAsync() ?? string.Empty
+            };
+        }   
     }
 }
 

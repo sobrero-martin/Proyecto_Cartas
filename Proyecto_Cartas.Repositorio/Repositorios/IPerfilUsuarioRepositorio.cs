@@ -11,5 +11,9 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
     public interface IPerfilUsuarioRepositorio : IRepositorio<PerfilUsuario>
     {
         Task<PerfilUsuarioDTO?> GetPerfilByName(string nombre);
+
+        Task<PerfilUsuarioDTO?> GetPerfilByUserId(int id);
+
+        Task<PerfilUsuarioDTO?> GetPerfilById(int id);
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Proyecto_Cartas.BD.Datos.Entidades;
 using Proyecto_Cartas.Repositorio.Repositorios;
+using Proyecto_Cartas.Server.Hubs;
 using Proyecto_Cartas.Shared.DTO;
 
 namespace Proyecto_Cartas.Server.Controllers
@@ -14,24 +16,36 @@ namespace Proyecto_Cartas.Server.Controllers
         private readonly IEventoRepositorio eventoRepositorio;
         private readonly IEstadoCartaRepositorio estadoCartaRepositorio;
         private readonly IUsuarioPartidaRepositorio usuarioPartidaRepositorio;
+        private readonly IHubContext<JuegoHub> hubContext;
+        private readonly IPerfilUsuarioRepositorio perfilUsuarioRepositorio;
 
         public JuegoController(IPartidaRepositorio partidaRepositorio,
                                ITurnoRepositorio turnoRepositorio,
                                IEventoRepositorio eventoRepositorio,
                                IEstadoCartaRepositorio estadoCartaRepositorio,
-                               IUsuarioPartidaRepositorio usuarioPartidaRepositorio)
+                               IUsuarioPartidaRepositorio usuarioPartidaRepositorio,
+                               IHubContext<JuegoHub> hubContext,
+                               IPerfilUsuarioRepositorio perfilUsuarioRepositorio)
         {
             this.partidaRepositorio = partidaRepositorio;
             this.turnoRepositorio = turnoRepositorio;
             this.eventoRepositorio = eventoRepositorio;
             this.estadoCartaRepositorio = estadoCartaRepositorio;
             this.usuarioPartidaRepositorio = usuarioPartidaRepositorio;
+            this.hubContext = hubContext;
+            this.perfilUsuarioRepositorio = perfilUsuarioRepositorio;
         }
 
-        [HttpPost("buscarPartida")]
+        /*
+        [HttpPost("buscarPartida/{id:int}")]
         public async Task<ActionResult<BuscarPartidaRespuestaDTO>> BuscarPartida(int perfilUsuarioId)
+        */
+
+        [HttpPost("buscarPartida")]
+        public async Task<ActionResult<BuscarPartidaRespuestaDTO>> BuscarPartida(BuscarPartidaSolicitudDTO dto)
         {
             var respuesta = new BuscarPartidaRespuestaDTO();
+            int perfilUsuarioId = dto.PerfilUsuarioId;
 
             if (await usuarioPartidaRepositorio.JugadorYaEnPartida(perfilUsuarioId))
             {
@@ -55,7 +69,7 @@ namespace Proyecto_Cartas.Server.Controllers
 
                 await usuarioPartidaRepositorio.AgregarJugador(partida, perfilUsuarioId);
 
-                respuesta.Aceptado = true;
+                respuesta.Aceptado = false;
                 respuesta.Mensaje = "Partida creada. Esperando a otro jugador...";
                 respuesta.PartidaId = partida.Id;
                 respuesta.PerfilUsuarioRivalId = 0;
@@ -67,12 +81,48 @@ namespace Proyecto_Cartas.Server.Controllers
                 var jugadores = await usuarioPartidaRepositorio.ObtenerJugadoresEnPartida(partida.Id);
                 var rival = jugadores.FirstOrDefault(j => j.PerfilUsuarioID != perfilUsuarioId);
 
-                respuesta.Aceptado = true;
-                respuesta.Mensaje = "Te has unido a una partida.";
+                PerfilUsuarioDTO? perfilRival = null;
+
+                if (rival != null)
+                { 
+                    perfilRival = await perfilUsuarioRepositorio.GetPerfilById(rival.PerfilUsuarioID); 
+                }
+
+                respuesta.Aceptado = false;
+                respuesta.Mensaje = "Partida encontrada....";
                 respuesta.PartidaId = partida.Id;
                 respuesta.PerfilUsuarioRivalId = rival?.PerfilUsuarioID;
+
                 return Ok(respuesta);
             }
+        }
+
+        [HttpGet("estado/{perfilUsuarioId:int}")]
+        public async Task<ActionResult<RevisarEstadoDTO>> GetEstadoPartida(int perfilUsuarioId)
+        {
+            var partida = await usuarioPartidaRepositorio.RevisarPartidaEncontrada(perfilUsuarioId);
+
+            if (partida == null)
+            {
+                return BadRequest("No se ha encontrado una partida para este usuario.");
+            }
+
+
+
+            await hubContext.Clients.Group($"partida-{partida.PartidaId}")
+                            .SendAsync("RecibirNotificacionPartida", $"¡Se encontró una partida! {partida.NombreRival} vs {partida.Nombre}");
+
+            return Ok(partida);
+        }
+
+
+        [HttpPost("confirmarPartida")]
+        public async Task<ActionResult> ConfirmarPartida(int perfilUsuarioId)
+        {
+            var exito = await usuarioPartidaRepositorio.ConfirmarPartida(perfilUsuarioId);
+            if (!exito) return BadRequest("No se pudo confirmar la partida");
+
+            return Ok("Partida confirmada correctamente.");
         }
 
         [HttpPost("cancelarPartida")]
@@ -84,6 +134,8 @@ namespace Proyecto_Cartas.Server.Controllers
             {
                 return BadRequest("No estás jugando o buscando una partida.");
             }
+
+            await hubContext.Clients.All.SendAsync("RecibirNotificacion", $"El usuario {perfilUsuarioId} canceló la partida");
 
             return Ok("Partida cancelada correctamente.");
         }
@@ -150,5 +202,7 @@ namespace Proyecto_Cartas.Server.Controllers
             }
             return Ok($"Row with id {id} correctly deleted");
         }
+
+        
     }
 }

@@ -1,0 +1,119 @@
+﻿@page "/menuPrincipal"
+@inject IHttpServicio http
+@inject SesionUsuario Sesion
+@inject NavigationManager navHttp
+
+<PageTitle>Menú Principal</PageTitle>
+
+<h1>Menú Principal</h1>
+
+<p>Bienvenido, @nombreUsuario</p>
+
+<button class="btn btn-success" @onclick="BuscarPartida" disabled="@buscandoPartida">Buscar Partida</button>
+
+@if (mostrarPopupConfirmar)
+{
+    <div style="position: fixed; top: 20px; right: 20px; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
+        <!--¡Se encontró una partida! Rival: nombreRival-->
+        @notificacion
+    </div>
+}
+
+@code {
+
+    private string nombreUsuario = "usuario sin perfil";
+    private string nombreRival = string.Empty;
+    private bool buscandoPartida = false;
+    private bool mostrarPopupConfirmar = false;
+    private string mensajeEstado = string.Empty;
+    private int partidaIdEncontrada;
+    private int perfilRivalId;
+    private int perfilUsuarioId;
+    private HubConnection? hubConnection;
+    BuscarPartidaSolicitudDTO buscarPartida = new BuscarPartidaSolicitudDTO { PerfilUsuarioId = 0 };
+    private string notificacion = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var httpResp = await http.Get<PerfilUsuarioDTO>($"https://localhost:7192/api/PerfilUsuario/{Sesion.UsuarioId}");
+        if (!httpResp.Error && httpResp.Respuesta != null)
+        {
+            nombreUsuario = httpResp.Respuesta.Nombre;
+            perfilUsuarioId = httpResp.Respuesta.Id;
+            buscarPartida = new BuscarPartidaSolicitudDTO
+            {
+                PerfilUsuarioId = perfilUsuarioId
+            };
+        }
+        hubConnection = new HubConnectionBuilder()
+           .WithUrl("https://localhost:7192/juegoHub")
+           .WithAutomaticReconnect()
+           .Build();
+
+        hubConnection.On<string>("RecibirNotificacionPartida", (mensaje) =>
+        {
+            InvokeAsync(() =>
+            {
+                mostrarPopupConfirmar = true;
+                notificacion = mensaje;
+                StateHasChanged();
+            });
+
+        });
+
+        await hubConnection.StartAsync();
+
+    }
+
+
+
+    private async Task BuscarPartida()
+    {
+        buscandoPartida = true;
+        mensajeEstado = "⏳ Buscando partida...";
+
+        //var httpResp = await http.Post<int, BuscarPartidaRespuestaDTO>($"https://localhost:7192/api/juego/buscarPartida/{perfilUsuarioId}");
+
+        var httpResp = await http.Post<BuscarPartidaSolicitudDTO, BuscarPartidaRespuestaDTO>($"https://localhost:7192/api/juego/buscarPartida", buscarPartida);
+
+        if (!httpResp.Error && httpResp.Respuesta != null)
+        {
+
+            if(hubConnection != null)
+            {
+                await hubConnection.InvokeAsync("UnirsePartida", httpResp.Respuesta.PartidaId);
+            }
+
+
+            /*
+            if (httpResp.Respuesta.PerfilUsuarioRivalId != 0)
+            {
+                var httpNombreRival = await http.Get<PerfilUsuarioDTO>($"https://localhost:7192/api/PerfilUsuario/{httpResp.Respuesta.PerfilUsuarioRivalId}");
+                if(!httpNombreRival.Error && httpNombreRival.Respuesta != null) nombreRival = httpNombreRival.Respuesta.Nombre;
+
+                }*/
+
+            mensajeEstado = httpResp.Respuesta.Mensaje;
+
+            while(buscandoPartida == true)
+            {
+                var httpEstadoPartida = await http.Get<RevisarEstadoDTO>($"https://localhost:7192/api/juego/estado/{buscarPartida.PerfilUsuarioId}");
+                if(!httpEstadoPartida.Error && httpEstadoPartida.Respuesta != null)
+                {
+                    buscandoPartida = false;
+                }
+            }
+            
+        }
+        else
+        {
+            mensajeEstado = $"❌ Error: {httpResp.HttpResponseMessage.StatusCode}";
+            buscandoPartida = false;
+        }
+
+       
+
+    }
+
+
+}

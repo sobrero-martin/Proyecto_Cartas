@@ -32,14 +32,14 @@ namespace Proyecto_Cartas.Server.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(UsuarioAuthDTO dto)
+        public async Task<ActionResult<MensajeRespuestaDTO>> Register(UsuarioAuthDTO dto)
         {
             var usuarioId = await repositorio.Register(dto);
 
             if (usuarioId == 0)
-                return BadRequest("El email ya está registrado");
+                return BadRequest(new MensajeRespuestaDTO { Mensaje = "El email ya está registrado" });
 
-            return Ok("Usuario registrado correctamente");
+            return Ok(new MensajeRespuestaDTO { Mensaje = "Usuario registrado correctamente" });
         }
 
         [HttpGet]

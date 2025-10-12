@@ -1,4 +1,5 @@
 ﻿using Proyecto_Cartas.BD.Datos.Entidades;
+using Proyecto_Cartas.Shared.DTO;
 
 namespace Proyecto_Cartas.Repositorio.Repositorios
 {
@@ -10,5 +11,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         Task<List<UsuarioPartida>> ObtenerJugadoresEnPartida(int partidaId);
         Task<bool> CancelarPartida(int perfilUsuarioId);
         Task<bool> JugadorBuscandoPartida(int perfilUsuarioId);
+        Task<bool> ConfirmarPartida(int perfilUsuarioId);
+        Task<RevisarEstadoDTO> RevisarPartidaEncontrada(int perfilUsuarioId);
     }
 }

@@ -8,6 +8,7 @@ namespace Proyecto_Cartas.Shared.DTO
 {
     public class PerfilUsuarioDTO
     {
+        public int Id { get; set; }
         public string Nombre { get; set; } = string.Empty;
         public string Bio { get; set; } = string.Empty;
         public int Nivel { get; set; }
