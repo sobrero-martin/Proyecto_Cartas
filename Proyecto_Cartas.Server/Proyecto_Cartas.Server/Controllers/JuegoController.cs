@@ -203,6 +203,125 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok($"Row with id {id} correctly deleted");
         }
 
-        
+        #region EstadoCarta
+
+        [HttpGet("estadoCarta")]
+        public async Task<ActionResult<List<EstadoCartaDTO>>> Get()
+        {
+            var list = await estadoCartaRepositorio.GetFull();
+
+            if (list == null)
+            {
+                return NotFound("No list found(NULL).");
+            }
+
+            if (list.Count == 0)
+            {
+                return NotFound("No existing records on list.");
+            }
+
+            return Ok(list);
+        }
+
+        [HttpGet("estadoCarta/{id:int}")] // api/estadoCarta/{id}
+
+        public async Task<ActionResult<EstadoCartaDTO>> Get(int id)
+        {
+            var estado = await estadoCartaRepositorio.GetById(id);
+            if (estado == null)
+            {
+                return NotFound($"No se encontró el dato con id {id}");
+            }
+            return Ok(estado);
+        }
+
+        [HttpGet("estadoCarta/usuario/{usuarioPartidaId:int}")] // api/estadoCarta/usuario/{usuarioPartidaId}
+
+        public async Task<ActionResult<List<EstadoCartaDTO>>> GetEstadoCartaDeUnUsuario(int usuarioPartidaId)
+        {
+            var estado = await estadoCartaRepositorio.EstadoCartaDeUnUsuario(usuarioPartidaId);
+            if (estado == null)
+            {
+                return NotFound($"No se encontró el dato con id {usuarioPartidaId}");
+            }
+            if (estado.Count == 0)
+            {
+                return Ok("No existen datos en este momento.");
+            }
+            return Ok(estado);
+        }
+
+        [HttpGet("estadoCarta/filtrarPosicion/{usuarioPartidaId:int}/{posicion}")] // api/estadoCarta/filtrarPosicion/{usuarioPartidaId}/{posicion}
+
+        public async Task<ActionResult<List<EstadoCartaDTO>>> GetFiltrarPosicion(int usuarioPartidaId, string posicion)
+        {
+            var estado = await estadoCartaRepositorio.FiltrarPosicion(usuarioPartidaId, posicion);
+            if (estado == null)
+            {
+                return NotFound($"No se encontró el dato con id {usuarioPartidaId} y posición {posicion}");
+            }
+            if (estado.Count == 0)
+            {
+                return Ok("No existen datos en este momento.");
+            }
+            return Ok(estado);
+        }
+
+        [HttpPut("estadoCarta/robarCarta/{usuarioPartidaId:int}")] // api/estadoCarta/robarCarta/{usuarioPartidaId}
+
+        public async Task<ActionResult<EstadoCartaDTO>> PutRobarCarta(int usuarioPartidaId)
+        {
+            var estado = await estadoCartaRepositorio.RobarCarta(usuarioPartidaId);
+            if (estado == null)
+            {
+                return NotFound($"No se pudo robar carta para el Usuario: {usuarioPartidaId}");
+            }
+            return Ok(estado);
+        }
+
+        [HttpPut("estadoCarta/colocarEnCampo/{usuarioPartidaId:int}/{cartaId:int}")] // api/estadoCarta/colocarEnCampo/{usuarioPartidaId}/{cartaId}
+
+        public async Task<ActionResult<EstadoCartaDTO>> PutColocarEnCampo(int usuarioPartidaId, int cartaId)
+        {
+            var estado = await estadoCartaRepositorio.ColocarEnCampo(usuarioPartidaId, cartaId);
+            if (estado == null)
+            {
+                return BadRequest($"No se pudo colocar en campo la carta {cartaId}");
+            }
+            return Ok(estado);
+        }
+
+        [HttpPut("estadoCarta/enviarAlCementerio/{usuarioPartidaId:int}/{cartaId:int}")] // api/estadoCarta/enviarAlCementerio/{usuarioPartidaId}/{cartaId}
+
+        public async Task<ActionResult<EstadoCartaDTO>> PutEnviarAlCementerio(int usuarioPartidaId, int cartaId)
+        {
+            var estado = await estadoCartaRepositorio.EnviarAlCementerio(usuarioPartidaId, cartaId);
+            if (estado == null)
+            {
+                return BadRequest($"No se pudo enviar al cementerio la carta {cartaId}");
+            }
+            return Ok(estado);
+        }
+
+        [HttpPut("estadoCarta/robarCartasCantidad/{usuarioPartidaId:int}/{cantidad:int}")] // api/estadoCarta/robarCartasCantidad/{usuarioPartidaId}/{cantidad}
+
+        public async Task<ActionResult<List<EstadoCartaDTO>>> PutRobarCartasCantidad(int usuarioPartidaId, int cantidad)
+        {
+            var estado = await estadoCartaRepositorio.RobarCartasCantidad(usuarioPartidaId, cantidad);
+            if (estado == null)
+            {
+                return NotFound($"No se pudieron robar {cantidad} cartas para el Usuario: {usuarioPartidaId}");
+            }
+            if (estado.Count == 0)
+            {
+                return Ok("No existen datos en este momento.");
+            }
+            return Ok(estado);
+        }
+
+
+        #endregion
+
+
     }
 }
