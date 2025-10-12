@@ -9,13 +9,13 @@
 
 <p>Bienvenido, @nombreUsuario</p>
 
-<button class="btn btn-success" @onclick="BuscarPartida" disabled="@buscandoPartida">Buscar Partida</button>
+<button class="btn btn-success" @onclick="BuscarPartida" disabled="@buscandoPartida">@mensajeEstado</button>
 
 @if (mostrarPopupConfirmar)
 {
     <div style="position: fixed; top: 20px; right: 20px; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
-        <!--¡Se encontró una partida! Rival: nombreRival-->
         @notificacion
+        <button class="btn btn-primary" @onclick="ConfirmarPartida">Confirmar</button><button class="btn btn-secondary">Rechazar</button>
     </div>
 }
 
@@ -25,7 +25,7 @@
     private string nombreRival = string.Empty;
     private bool buscandoPartida = false;
     private bool mostrarPopupConfirmar = false;
-    private string mensajeEstado = string.Empty;
+    private string mensajeEstado = "Buscar Partida";
     private int partidaIdEncontrada;
     private int perfilRivalId;
     private int perfilUsuarioId;
@@ -101,18 +101,48 @@
                 if(!httpEstadoPartida.Error && httpEstadoPartida.Respuesta != null)
                 {
                     buscandoPartida = false;
+                    mensajeEstado = "Buscar Partida";
                 }
             }
-            
+
         }
         else
         {
-            mensajeEstado = $"❌ Error: {httpResp.HttpResponseMessage.StatusCode}";
+            var dtoRespuesta = await httpResp.HttpResponseMessage.Content.ReadFromJsonAsync<BuscarPartidaRespuestaDTO>();
+            mensajeEstado = $"❌ Error: {dtoRespuesta?.Mensaje}";
             buscandoPartida = false;
         }
 
-       
 
+
+    }
+
+    private async Task ConfirmarPartida()
+    {
+        var httpResp = await http.Post<BuscarPartidaSolicitudDTO, MensajeRespuestaDTO>("https://localhost:7192/api/juego/confirmarPartida/", buscarPartida);
+
+        if (!httpResp.Error)
+        {
+            var respPartida = await http.Get<int>($"https://localhost:7192/api/juego/obtenerPartidaPorJugador/{perfilUsuarioId}");
+
+            notificacion = "Partida confirmada. Esperando al otro jugador...";
+            StateHasChanged();
+
+            while (respPartida.Respuesta == 0)
+            {    
+                await Task.Delay(1000);
+                respPartida = await http.Get<int>($"https://localhost:7192/api/juego/obtenerPartidaPorJugador/{perfilUsuarioId}");
+            }
+
+
+            var respPartidaComenzada = await http.Get<bool>($"https://localhost:7192/api/juego/revisarPartida/{respPartida.Respuesta}");
+            navHttp.NavigateTo($"/juego/{respPartida.Respuesta}");
+
+        }
+        else
+        {
+            notificacion = "Error al confirmar la partida.";
+        }
     }
 
 

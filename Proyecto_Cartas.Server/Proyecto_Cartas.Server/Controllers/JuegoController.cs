@@ -117,13 +117,28 @@ namespace Proyecto_Cartas.Server.Controllers
 
 
         [HttpPost("confirmarPartida")]
-        public async Task<ActionResult> ConfirmarPartida(int perfilUsuarioId)
+        public async Task<ActionResult<MensajeRespuestaDTO>> ConfirmarPartida(BuscarPartidaSolicitudDTO perfilUsuarioId)
         {
-            var exito = await usuarioPartidaRepositorio.ConfirmarPartida(perfilUsuarioId);
-            if (!exito) return BadRequest("No se pudo confirmar la partida");
+            int id = perfilUsuarioId.PerfilUsuarioId;
+            var exito = await usuarioPartidaRepositorio.ConfirmarPartida(id);
+            if (!exito) return BadRequest( new MensajeRespuestaDTO { Mensaje = "No se pudo confirmar la partida" });
 
-            return Ok("Partida confirmada correctamente.");
+            return Ok(new MensajeRespuestaDTO { Mensaje = "Partida confirmada correctamente." });
         }
+
+        [HttpGet("obtenerPartidaPorJugador/{perfilUsuarioId:int}")]
+        public async Task<ActionResult<int>> ObtenerPartidaPorJugador(int perfilUsuarioId)
+        {
+            int? partidaId = await usuarioPartidaRepositorio.BuscarPartidaPorJugador(perfilUsuarioId);
+
+            if (partidaId == null)
+            {
+                return NotFound("El jugador no está en ninguna partida.");
+            }
+
+            return Ok(partidaId);
+        }
+
 
         [HttpPost("cancelarPartida")]
         public async Task<ActionResult> CancelarPartida(int perfilUsuarioId)

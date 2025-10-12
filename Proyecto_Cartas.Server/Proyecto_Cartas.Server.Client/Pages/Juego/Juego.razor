@@ -1,0 +1,13 @@
+﻿@page "/juego/{PartidaId:int}"
+
+<PageTitle>Partida</PageTitle>
+
+<h1>Partida #@PartidaId</h1>
+
+
+
+@code {
+    [Parameter] public int PartidaId { get; set; }
+
+
+}

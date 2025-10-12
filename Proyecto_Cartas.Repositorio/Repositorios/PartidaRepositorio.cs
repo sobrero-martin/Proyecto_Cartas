@@ -50,5 +50,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 await context.SaveChangesAsync();
             }
         }
+
+
     }
 }

@@ -65,7 +65,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         public async Task<bool> JugadorBuscandoPartida(int perfilUsuarioId)
         {
             return await context.UsuariosPartida
-                .AnyAsync(p => p.PerfilUsuarioID == perfilUsuarioId && p.Partida != null && p.Partida.Estado == "Buscando");
+                .AnyAsync(p => p.PerfilUsuarioID == perfilUsuarioId && p.Partida != null && (p.Partida.Estado == "Buscando" || p.Partida.Estado =="PorConfirmar"));
         }
 
         public async Task<bool> CancelarPartida(int perfilUsuarioId)
@@ -158,7 +158,18 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                                .Select(p => p.Nombre)
                                .FirstOrDefaultAsync() ?? string.Empty
             };
-        }   
+        }
+
+        public async Task<int?> BuscarPartidaPorJugador(int perfilUsuarioId)
+        {
+            var partida = await context.UsuariosPartida
+                          .Include(p => p.Partida)
+                          .Where(p => p.PerfilUsuarioID == perfilUsuarioId && p.Partida != null && (p.Partida.Estado == "EnProgreso"))
+                          .FirstOrDefaultAsync();
+
+            return partida?.PartidaID;
+        }
+
     }
 }
 

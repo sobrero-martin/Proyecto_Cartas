@@ -7,6 +7,5 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         Task<Partida?> BuscarPartidaDisponible();
         Task<Partida> CrearPartida();
         Task ActualizarEstadoPartida(int partidaId, string nuevoEstado);
-       
     }
 }
