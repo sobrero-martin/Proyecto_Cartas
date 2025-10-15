@@ -11,7 +11,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
     public interface IEstadoCartaRepositorio : IRepositorio<EstadoCarta>
     {
         Task<EstadoCartaDTO?> CambiarPosicion(int id, string nuevaPosicion);
-        Task<EstadoCartaDTO?> ColocarEnCampo(int usuarioPartidaId, int cartaId);
+        Task<EstadoCartaDTO?> ColocarEnCampo(int usuarioPartidaId, int cartaId, int lugar);
         Task<EstadoCartaDTO?> EnviarAlCementerio(int usuarioPartidaId, int cartaId);
         Task<List<EstadoCartaDTO>> EstadoCartaDeUnUsuario(int usuarioPartidaId);
         Task<List<EstadoCartaDTO>> FiltrarPosicion(int usuarioPartidaId, string posicion);

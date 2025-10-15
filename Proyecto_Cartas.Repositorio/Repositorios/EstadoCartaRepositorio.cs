@@ -91,7 +91,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return cartaRobada;
         }
 
-        public async Task<EstadoCartaDTO?> ColocarEnCampo(int usuarioPartidaId, int cartaId)
+        public async Task<EstadoCartaDTO?> ColocarEnCampo(int usuarioPartidaId, int cartaId, int lugar)
         {
             var cartaSeleccionada = await context.EstadosCarta
                 .FirstOrDefaultAsync(ec =>
@@ -102,7 +102,12 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             {
                 return null; // La carta especificada no está en la mano
             }
-            var cartaEnCampo = await CambiarPosicion(cartaSeleccionada.Id, "Campo");
+
+            var campoOcupado = await context.EstadosCarta
+                                     .FirstOrDefaultAsync(c => c.Posicion == $"Campo{lugar}");
+            if (campoOcupado != null) return null; // La posicion del campo ya esta ocupada
+
+            var cartaEnCampo = await CambiarPosicion(cartaSeleccionada.Id, $"Campo{lugar}");
             return cartaEnCampo;
         }
 
@@ -112,7 +117,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 .FirstOrDefaultAsync(ec =>
                     ec.UsuarioPartidaID == usuarioPartidaId &&
                     ec.Id == cartaId &&
-                    (ec.Posicion == "Mano" || ec.Posicion == "Campo"));
+                    (ec.Posicion == "Mano" || ec.Posicion == "Campo1" || ec.Posicion == "Campo2" || ec.Posicion == "Campo3"));
             if (cartaSeleccionada == null)
             {
                 return null; // La carta especificada no está en la mano o en el campo

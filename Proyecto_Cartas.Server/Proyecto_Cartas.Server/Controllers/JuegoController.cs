@@ -294,14 +294,14 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(estado);
         }
 
-        [HttpPut("estadoCarta/colocarEnCampo/{usuarioPartidaId:int}/{cartaId:int}")] // api/estadoCarta/colocarEnCampo/{usuarioPartidaId}/{cartaId}
+        [HttpPut("estadoCarta/colocarEnCampo/{usuarioPartidaId:int}/{cartaId:int}/{lugar:int}")] // api/estadoCarta/colocarEnCampo/{usuarioPartidaId}/{cartaId}/{lugar}
 
-        public async Task<ActionResult<EstadoCartaDTO>> PutColocarEnCampo(int usuarioPartidaId, int cartaId)
+        public async Task<ActionResult<EstadoCartaDTO>> PutColocarEnCampo(int usuarioPartidaId, int cartaId, int lugar)
         {
-            var estado = await estadoCartaRepositorio.ColocarEnCampo(usuarioPartidaId, cartaId);
+            var estado = await estadoCartaRepositorio.ColocarEnCampo(usuarioPartidaId, cartaId, lugar);
             if (estado == null)
             {
-                return BadRequest($"No se pudo colocar en campo la carta {cartaId}");
+                return BadRequest($"No se pudo colocar en campo la carta en el Campo{lugar}");
             }
             return Ok(estado);
         }
