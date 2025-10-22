@@ -13,10 +13,12 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
     public class EstadoCartaRepositorio : Repositorio<EstadoCarta>, IEstadoCartaRepositorio
     {
         private readonly AppDbContext context;
+        private readonly IEventoRepositorio eventoRepositorio;
 
-        public EstadoCartaRepositorio(AppDbContext context) : base(context)
+        public EstadoCartaRepositorio(AppDbContext context, IEventoRepositorio eventoRepositorio) : base(context)
         {
             this.context = context;
+            this.eventoRepositorio = eventoRepositorio;
         }
 
         public async Task<List<EstadoCartaDTO>> EstadoCartaDeUnUsuario(int usuarioPartidaId)
@@ -52,15 +54,32 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return pos;
         }
 
-        public async Task<EstadoCartaDTO?> CambiarPosicion(int id, string nuevaPosicion)
+        public async Task<EstadoCartaDTO?> CambiarPosicion(int id, string nuevaPosicion, int turnoId, string accion)
         {
             var estadoCarta = await context.EstadosCarta.FirstOrDefaultAsync(ec => ec.Id == id);
             if (estadoCarta == null)
             {
                 return null;
             }
+            var originalPosicion = estadoCarta.Posicion;
             estadoCarta.Posicion = nuevaPosicion;
             await context.SaveChangesAsync();
+            try
+            {
+                var evento = await eventoRepositorio.CrearEvento(new EventoCrearDTO
+                {
+                    TurnoID = turnoId,
+                    EstadoCartaID = id,
+                    Accion = accion,
+                    Origen = originalPosicion,
+                    Destino = nuevaPosicion
+                });
+            }
+            catch (Exception ex)
+            {
+                // Manejar la excepción (por ejemplo, registrar el error)
+                Console.WriteLine($"Error al crear el evento: {ex.Message}");
+            }
 
             return new EstadoCartaDTO
             {
@@ -74,7 +93,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             };
         }
 
-        public async Task<EstadoCartaDTO?> RobarCarta(int usuarioPartidaId)
+        public async Task<EstadoCartaDTO?> RobarCarta(int usuarioPartidaId, int turnoId)
         {
             var cartasEnMazo = await context.EstadosCarta
                 .Where(ec => ec.UsuarioPartidaID == usuarioPartidaId && ec.Posicion == "Mazo")
@@ -87,11 +106,11 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             var random = new Random();
             var cartaSeleccionada = cartasEnMazo[random.Next(cartasEnMazo.Count)];
 
-            var cartaRobada = await CambiarPosicion(cartaSeleccionada.Id, "Mano");
+            var cartaRobada = await CambiarPosicion(cartaSeleccionada.Id, "Mano", turnoId, "Robo");
             return cartaRobada;
         }
 
-        public async Task<EstadoCartaDTO?> ColocarEnCampo(int usuarioPartidaId, int cartaId, int lugar)
+        public async Task<EstadoCartaDTO?> ColocarEnCampo(int usuarioPartidaId, int cartaId, int lugar, int turnoId)
         {
             var cartaSeleccionada = await context.EstadosCarta
                 .FirstOrDefaultAsync(ec =>
@@ -104,14 +123,14 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             }
 
             var campoOcupado = await context.EstadosCarta
-                                     .FirstOrDefaultAsync(c => c.Posicion == $"Campo{lugar}");
+                                     .FirstOrDefaultAsync(c => c.UsuarioPartidaID == usuarioPartidaId && c.Posicion == $"Campo{lugar}");
             if (campoOcupado != null) return null; // La posicion del campo ya esta ocupada
 
-            var cartaEnCampo = await CambiarPosicion(cartaSeleccionada.Id, $"Campo{lugar}");
+            var cartaEnCampo = await CambiarPosicion(cartaSeleccionada.Id, $"Campo{lugar}", turnoId, "Colocaren Campo");
             return cartaEnCampo;
         }
 
-        public async Task<EstadoCartaDTO?> EnviarAlCementerio(int usuarioPartidaId, int cartaId)
+        public async Task<EstadoCartaDTO?> EnviarAlCementerio(int usuarioPartidaId, int cartaId, int turnoId)
         {
             var cartaSeleccionada = await context.EstadosCarta
                 .FirstOrDefaultAsync(ec =>
@@ -122,11 +141,11 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             {
                 return null; // La carta especificada no está en la mano o en el campo
             }
-            var cartaEnCementerio = await CambiarPosicion(cartaSeleccionada.Id, "Cementerio");
+            var cartaEnCementerio = await CambiarPosicion(cartaSeleccionada.Id, "Cementerio", turnoId, "Enviar al Cementerio");
             return cartaEnCementerio;
         }
 
-        public async Task<List<EstadoCartaDTO>> RobarCartasCantidad(int usuarioPartidaId, int cantidad)
+        public async Task<List<EstadoCartaDTO>> RobarCartasCantidad(int usuarioPartidaId, int cantidad, int turnoId)
         {
             var cartasEnMazo = await context.EstadosCarta
                 .Where(ec => ec.UsuarioPartidaID == usuarioPartidaId && ec.Posicion == "Mazo")
@@ -144,15 +163,31 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
 
             foreach (var carta in cartaSeleccionadas)
             {
-                var cartaRobada = await CambiarPosicion(carta.Id, "Mano");
+                var cartaRobada = await CambiarPosicion(carta.Id, "Mano", turnoId, "Robo");
                 if (cartaRobada != null)
                 {
                     cartasRobadas.Add(cartaRobada);
+                    //try
+                    //{
+                    //    var evento = await eventoRepositorio.CrearEvento(new EventoCrearDTO
+                    //    {
+                    //        TurnoID = turnoId,
+                    //        EstadoCartaID = cartaRobada.Id,
+                    //        Accion = "Robo",
+                    //        Origen = "Mazo",
+                    //        Destino = "Mano"
+                    //    });
+                    //}
+                    //catch (Exception ex)
+                    //{
+                    //    // Manejar la excepción (por ejemplo, registrar el error)
+                    //    Console.WriteLine($"Error al crear el evento: {ex.Message}");
+                    //}
                 }
-                
+
             }
 
-            return cartasRobadas; 
+            return cartasRobadas;
 
         }
 

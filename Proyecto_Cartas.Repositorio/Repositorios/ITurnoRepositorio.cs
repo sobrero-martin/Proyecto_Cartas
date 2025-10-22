@@ -1,4 +1,5 @@
 ﻿using Proyecto_Cartas.BD.Datos.Entidades;
+using Proyecto_Cartas.Shared.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,5 +10,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
 {
     public interface ITurnoRepositorio : IRepositorio<Turno>
     {
+        
+        Task<TurnoDTO> CrearTurno(TurnoCrearDTO turnoDTO);
     }
 }

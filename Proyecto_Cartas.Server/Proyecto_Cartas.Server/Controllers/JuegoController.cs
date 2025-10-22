@@ -8,7 +8,7 @@ using Proyecto_Cartas.Shared.DTO;
 namespace Proyecto_Cartas.Server.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] 
+    [Route("api/[controller]")]
     public class JuegoController : ControllerBase
     {
         private readonly IPartidaRepositorio partidaRepositorio;
@@ -84,8 +84,8 @@ namespace Proyecto_Cartas.Server.Controllers
                 PerfilUsuarioDTO? perfilRival = null;
 
                 if (rival != null)
-                { 
-                    perfilRival = await perfilUsuarioRepositorio.GetPerfilById(rival.PerfilUsuarioID); 
+                {
+                    perfilRival = await perfilUsuarioRepositorio.GetPerfilById(rival.PerfilUsuarioID);
                 }
 
                 respuesta.Aceptado = false;
@@ -121,7 +121,7 @@ namespace Proyecto_Cartas.Server.Controllers
         {
             int id = perfilUsuarioId.PerfilUsuarioId;
             var exito = await usuarioPartidaRepositorio.ConfirmarPartida(id);
-            if (!exito) return BadRequest( new MensajeRespuestaDTO { Mensaje = "No se pudo confirmar la partida" });
+            if (!exito) return BadRequest(new MensajeRespuestaDTO { Mensaje = "No se pudo confirmar la partida" });
 
             return Ok(new MensajeRespuestaDTO { Mensaje = "Partida confirmada correctamente." });
         }
@@ -282,11 +282,11 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(estado);
         }
 
-        [HttpPut("estadoCarta/robarCarta/{usuarioPartidaId:int}")] // api/estadoCarta/robarCarta/{usuarioPartidaId}
+        [HttpPut("estadoCarta/robarCarta/{usuarioPartidaId:int}/{turnoId:int}")] // api/estadoCarta/robarCarta/{usuarioPartidaId}/{turnoId}
 
-        public async Task<ActionResult<EstadoCartaDTO>> PutRobarCarta(int usuarioPartidaId)
+        public async Task<ActionResult<EstadoCartaDTO>> PutRobarCarta(int usuarioPartidaId, int turnoId)
         {
-            var estado = await estadoCartaRepositorio.RobarCarta(usuarioPartidaId);
+            var estado = await estadoCartaRepositorio.RobarCarta(usuarioPartidaId, turnoId);
             if (estado == null)
             {
                 return NotFound($"No se pudo robar carta para el Usuario: {usuarioPartidaId}");
@@ -294,11 +294,11 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(estado);
         }
 
-        [HttpPut("estadoCarta/colocarEnCampo/{usuarioPartidaId:int}/{cartaId:int}/{lugar:int}")] // api/estadoCarta/colocarEnCampo/{usuarioPartidaId}/{cartaId}/{lugar}
+        [HttpPut("estadoCarta/colocarEnCampo/{usuarioPartidaId:int}/{cartaId:int}/{lugar:int}/{turnoId:int}")] // api/estadoCarta/colocarEnCampo/{usuarioPartidaId}/{cartaId}/{lugar}/{turnoId}
 
-        public async Task<ActionResult<EstadoCartaDTO>> PutColocarEnCampo(int usuarioPartidaId, int cartaId, int lugar)
+        public async Task<ActionResult<EstadoCartaDTO>> PutColocarEnCampo(int usuarioPartidaId, int cartaId, int lugar, int turnoId)
         {
-            var estado = await estadoCartaRepositorio.ColocarEnCampo(usuarioPartidaId, cartaId, lugar);
+            var estado = await estadoCartaRepositorio.ColocarEnCampo(usuarioPartidaId, cartaId, lugar, turnoId);
             if (estado == null)
             {
                 return BadRequest($"No se pudo colocar en campo la carta en el Campo{lugar}");
@@ -306,11 +306,11 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(estado);
         }
 
-        [HttpPut("estadoCarta/enviarAlCementerio/{usuarioPartidaId:int}/{cartaId:int}")] // api/estadoCarta/enviarAlCementerio/{usuarioPartidaId}/{cartaId}
+        [HttpPut("estadoCarta/enviarAlCementerio/{usuarioPartidaId:int}/{cartaId:int}/{turnoId:int}")] // api/estadoCarta/enviarAlCementerio/{usuarioPartidaId}/{cartaId}/{turnoId}
 
-        public async Task<ActionResult<EstadoCartaDTO>> PutEnviarAlCementerio(int usuarioPartidaId, int cartaId)
+        public async Task<ActionResult<EstadoCartaDTO>> PutEnviarAlCementerio(int usuarioPartidaId, int cartaId, int turnoId)
         {
-            var estado = await estadoCartaRepositorio.EnviarAlCementerio(usuarioPartidaId, cartaId);
+            var estado = await estadoCartaRepositorio.EnviarAlCementerio(usuarioPartidaId, cartaId, turnoId);
             if (estado == null)
             {
                 return BadRequest($"No se pudo enviar al cementerio la carta {cartaId}");
@@ -318,11 +318,11 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(estado);
         }
 
-        [HttpPut("estadoCarta/robarCartasCantidad/{usuarioPartidaId:int}/{cantidad:int}")] // api/estadoCarta/robarCartasCantidad/{usuarioPartidaId}/{cantidad}
+        [HttpPut("estadoCarta/robarCartasCantidad/{usuarioPartidaId:int}/{cantidad:int}/{turnoId:int}")] // api/estadoCarta/robarCartasCantidad/{usuarioPartidaId}/{cantidad}/{turnoId}
 
-        public async Task<ActionResult<List<EstadoCartaDTO>>> PutRobarCartasCantidad(int usuarioPartidaId, int cantidad)
+        public async Task<ActionResult<List<EstadoCartaDTO>>> PutRobarCartasCantidad(int usuarioPartidaId, int cantidad, int turnoId)
         {
-            var estado = await estadoCartaRepositorio.RobarCartasCantidad(usuarioPartidaId, cantidad);
+            var estado = await estadoCartaRepositorio.RobarCartasCantidad(usuarioPartidaId, cantidad, turnoId);
             if (estado == null)
             {
                 return NotFound($"No se pudieron robar {cantidad} cartas para el Usuario: {usuarioPartidaId}");
@@ -337,6 +337,36 @@ namespace Proyecto_Cartas.Server.Controllers
 
         #endregion
 
+        [HttpPost("turno")] // api/turno
 
+        public async Task<ActionResult<TurnoDTO>> NuevoTurno(TurnoCrearDTO dto)
+        {
+            if (dto == null)
+            {
+                return BadRequest("El turno no puede ser nulo.");
+            }
+            try
+            {
+                var turnoCreado = await turnoRepositorio.CrearTurno(dto);
+                return CreatedAtAction(nameof(GetTurnoPorId), new { id = turnoCreado.Id }, turnoCreado);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al crear el turno: {ex.Message}");
+            }
+
+        }
+
+        [HttpGet("turno/{id:int}")] // api/turno/{id}
+        public async Task<ActionResult<TurnoDTO>> GetTurnoPorId(int id)
+        {
+            var turno = await turnoRepositorio.GetById(id);
+            if (turno == null)
+            {
+                return NotFound($"No se encontró el turno con ID {id}.");
+            }
+
+            return Ok(turno);
+        }
     }
 }
