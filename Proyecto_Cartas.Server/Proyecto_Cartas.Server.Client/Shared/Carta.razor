@@ -1,0 +1,21 @@
+﻿
+
+<div class="carta" @onclick="() => OnCartaClick.InvokeAsync(carta)">
+    <div class="carta-header">
+        <p>@carta.Nombre</p>
+    </div>
+
+    <div class="carta-body">
+        <img src="@($"img/cartas/{carta.Nombre}.jpg")" alt="@carta.Nombre" onerror="this.src='img/cartas/default.jpg';" />
+        <p class="stats">🗡️ @carta.Ataque - ❤️ @carta.Vida - 👟 @carta.Velocidad</p>
+    </div>
+
+    <div class="carta-footer">
+        <small>Posición: @carta.Posicion</small>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EstadoCartaDTO carta { get; set; } = default!;
+    [Parameter] public EventCallback<EstadoCartaDTO> OnCartaClick { get; set; }
+}

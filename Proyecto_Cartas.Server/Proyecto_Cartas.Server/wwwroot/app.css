@@ -58,3 +58,42 @@ h1:focus {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
 }
+
+.carta {
+    width: 158px;
+    border-radius: 10px;
+    border: 3px solid #555;
+    background: linear-gradient(180deg, #f8f8f8, #e0e0e0);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+    .carta img {
+        width: 100%;
+        height: 150px;
+        border-radius: 10px;
+        border: 2px solid black;
+    }
+
+.carta-body {
+    margin-top: -10px;
+}
+
+.stats {
+    font-size: 13px;
+    padding-top: 8px;
+}
+
+.carta-footer{
+    font-size: 10px;
+    margin-top: -10px;
+}
+
+
