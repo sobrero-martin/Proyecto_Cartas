@@ -21,14 +21,17 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             this.eventoRepositorio = eventoRepositorio;
         }
 
+
         public async Task<List<EstadoCartaDTO>> EstadoCartaDeUnUsuario(int usuarioPartidaId)
         {
+
             var estado = await context.EstadosCarta
                 .Where(ec => ec.UsuarioPartidaID == usuarioPartidaId).Select(ec => new EstadoCartaDTO
                 {
                     Id = ec.Id,
                     UsuarioPartidaID = ec.UsuarioPartidaID,
                     InventarioID = ec.InventarioID,
+                    Nombre = ec.Nombre,
                     Ataque = ec.Ataque,
                     Vida = ec.Vida,
                     Velocidad = ec.Velocidad,
@@ -46,6 +49,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                     Id = ec.Id,
                     UsuarioPartidaID = ec.UsuarioPartidaID,
                     InventarioID = ec.InventarioID,
+                    Nombre = ec.Nombre,
                     Ataque = ec.Ataque,
                     Vida = ec.Vida,
                     Velocidad = ec.Velocidad,
@@ -86,6 +90,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 Id = estadoCarta.Id,
                 UsuarioPartidaID = estadoCarta.UsuarioPartidaID,
                 InventarioID = estadoCarta.InventarioID,
+                Nombre = estadoCarta.Nombre,
                 Ataque = estadoCarta.Ataque,
                 Vida = estadoCarta.Vida,
                 Velocidad = estadoCarta.Velocidad,

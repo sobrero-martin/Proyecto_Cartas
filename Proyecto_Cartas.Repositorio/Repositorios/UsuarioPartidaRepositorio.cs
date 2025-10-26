@@ -170,6 +170,15 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return partida?.PartidaID;
         }
 
+        public async Task<int?> BuscarUsuarioPartida(int perfilUsuarioId)
+        {
+            var usuarioPartida = await context.UsuariosPartida
+                                  .Where(up => up.PerfilUsuarioID == perfilUsuarioId && up.Partida != null &&(up.Partida.Estado == "EnProgreso"))
+                                  .FirstOrDefaultAsync();
+
+            return usuarioPartida?.Id;
+        }
+
     }
 }
 

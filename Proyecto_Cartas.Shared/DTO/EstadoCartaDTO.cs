@@ -11,6 +11,7 @@ namespace Proyecto_Cartas.Shared.DTO
         public int Id { get; set; }
         public int UsuarioPartidaID { get; set; }
         public int InventarioID { get; set; }
+        public string Nombre { get; set; } = "";
         public int Ataque { get; set; }
         public int Vida { get; set; }
         public int Velocidad { get; set; }

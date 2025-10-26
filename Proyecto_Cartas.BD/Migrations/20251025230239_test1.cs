@@ -346,6 +346,7 @@ namespace Proyecto_Cartas.BD.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UsuarioPartidaID = table.Column<int>(type: "int", nullable: false),
                     InventarioID = table.Column<int>(type: "int", nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Ataque = table.Column<int>(type: "int", nullable: false),
                     Vida = table.Column<int>(type: "int", nullable: false),
                     Velocidad = table.Column<int>(type: "int", nullable: false),

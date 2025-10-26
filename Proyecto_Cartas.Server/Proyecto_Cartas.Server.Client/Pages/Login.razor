@@ -2,6 +2,7 @@
 @inject IHttpServicio http
 @inject SesionUsuario Sesion
 @inject NavigationManager navHttp
+@inject IJSRuntime js
 
 <PageTitle>Login</PageTitle>
 
@@ -56,25 +57,10 @@
             if (id != 0)
             {
                 Sesion.UsuarioId = id;
+                await js.InvokeVoidAsync("localStorage.setItem", "UsuarioId", id.ToString());
 
                 LoginStatus = "✅ Login successful!";
-                /*
-                hubConnection = new HubConnectionBuilder()
-                    .WithUrl("https://localhost:7192/juegoHub")
-                    .Build();
-
-                hubConnection.On<string>("RecibirNotificacion", (message) =>
-                {
-                    InvokeAsync(() =>
-                    {
-                        mensajeRecibido = message;
-                        mostrarPopup = true;
-                        StateHasChanged();
-                    });
-
-                });
-
-                await hubConnection.StartAsync();*/
+              
                 navHttp.NavigateTo("/menuPrincipal");
             }   
         }

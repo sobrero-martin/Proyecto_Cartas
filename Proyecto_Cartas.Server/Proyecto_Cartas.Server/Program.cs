@@ -10,6 +10,9 @@ using Proyecto_Cartas.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddScoped(sp =>
+    new HttpClient { BaseAddress = new Uri("https://localhost:7192") });
+
 builder.Services.AddControllers();
 
 builder.Services.AddSwaggerGen();

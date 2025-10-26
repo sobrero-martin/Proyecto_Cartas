@@ -1,13 +1,77 @@
 ﻿@page "/juego/{PartidaId:int}"
+@inject SesionUsuario Sesion
+@inject IHttpServicio http
+@inject HttpClient httpClient
+@inject IJSRuntime js
 
 <PageTitle>Partida</PageTitle>
 
 <h1>Partida #@PartidaId</h1>
 
-
+@if(cartasJugador.Count == 0)
+{
+    <p>Cargando cartas...</p>
+}
+else
+{
+    <h3>Cartas del Jugador:</h3>
+    <ul>
+        @foreach (var carta in cartasJugador)
+        {
+            <li>@carta.Nombre</li>
+        }
+    </ul>
+}
 
 @code {
     [Parameter] public int PartidaId { get; set; }
 
+    private List<EstadoCartaDTO> cartasJugador = new List<EstadoCartaDTO>();
+    private int UsuarioPartidaId;
 
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var idStr = await js.InvokeAsync<string>("localStorage.getItem", "UsuarioId");
+            if (!string.IsNullOrEmpty(idStr) && int.TryParse(idStr, out var id))
+            {
+                Sesion.UsuarioId = id;
+                await CargarPartida();
+            }
+            StateHasChanged();
+        }
+    }
+
+    private async Task CargarPartida()
+    {
+        try
+        {
+
+            var httpRespUsuarioPartida = await http.Get<int>($"api/Juego/buscarUsuarioPartida/{Sesion.UsuarioId}");
+            if (!httpRespUsuarioPartida.Error)
+            {
+                UsuarioPartidaId = httpRespUsuarioPartida.Respuesta;
+            }
+            else
+            {
+                Console.WriteLine("Error al obtener el perfil del usuario.");
+            }
+
+            var httpResp = await http.Get<List<EstadoCartaDTO>>($"api/Juego/estadoCarta/usuario/{UsuarioPartidaId}");
+            if (!httpResp.Error && httpResp.Respuesta != null)
+            {
+                cartasJugador = httpResp.Respuesta;
+            }
+            else
+            {
+                Console.WriteLine("Error al obtener las cartas.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error al inicializar la partida: {e.Message}");
+        }
+    }
 }

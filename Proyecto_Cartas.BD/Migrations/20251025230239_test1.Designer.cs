@@ -12,7 +12,7 @@ using Proyecto_Cartas.BD.Datos;
 namespace Proyecto_Cartas.BD.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251009194206_test1")]
+    [Migration("20251025230239_test1")]
     partial class test1
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace Proyecto_Cartas.BD.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -256,6 +256,10 @@ namespace Proyecto_Cartas.BD.Migrations
 
                     b.Property<int>("InventarioID")
                         .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Posicion")
                         .IsRequired()

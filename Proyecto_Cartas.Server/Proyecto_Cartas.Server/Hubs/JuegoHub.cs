@@ -4,8 +4,6 @@ namespace Proyecto_Cartas.Server.Hubs
 {
     public class JuegoHub : Hub
     {
-        public static Dictionary<int, List<string>> conexionesPorPartida = new();
-
         public async Task UnirsePartida(int partidaId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, $"partida-{partidaId}");

@@ -139,6 +139,18 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(partidaId);
         }
 
+        [HttpGet("buscarUsuarioPartida/{perfilUsuarioId:int}")]
+        public async Task<ActionResult<int>> BuscarUsuarioPartida(int perfilUsuarioId)
+        {
+            int? usuarioPartidaId = await usuarioPartidaRepositorio.BuscarUsuarioPartida(perfilUsuarioId);
+
+            if (usuarioPartidaId == null)
+            {
+                return NotFound("El jugador no está en ninguna partida.");
+            }
+
+            return Ok(usuarioPartidaId);
+        }
 
         [HttpPost("cancelarPartida")]
         public async Task<ActionResult> CancelarPartida(int perfilUsuarioId)
@@ -237,6 +249,7 @@ namespace Proyecto_Cartas.Server.Controllers
 
             return Ok(list);
         }
+
 
         [HttpGet("estadoCarta/{id:int}")] // api/estadoCarta/{id}
 

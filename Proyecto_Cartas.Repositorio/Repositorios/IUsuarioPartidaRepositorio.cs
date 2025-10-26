@@ -14,5 +14,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         Task<bool> ConfirmarPartida(int perfilUsuarioId);
         Task<RevisarEstadoDTO?> RevisarPartidaEncontrada(int perfilUsuarioId);
         Task<int?> BuscarPartidaPorJugador(int perfilUsuarioId);
+
+        Task<int?> BuscarUsuarioPartida(int perfilUsuarioId);
     }
 }

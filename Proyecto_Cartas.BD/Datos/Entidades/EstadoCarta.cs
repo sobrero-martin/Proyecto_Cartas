@@ -14,6 +14,8 @@ namespace Proyecto_Cartas.BD.Datos.Entidades
         public int InventarioID { get; set; }
         public Inventario? Inventario { get; set; }
 
+        public required string Nombre { get; set; }
+
         public required int Ataque { get; set; }
 
         public required int Vida { get; set; }
