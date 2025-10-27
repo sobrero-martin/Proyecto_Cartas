@@ -15,12 +15,18 @@
 else
 {
     <h3>Cartas del Jugador:</h3>
-    <ul>
+
+    <div class="testeo">
+        
         @foreach (var carta in cartasJugador)
         {
-            <Carta carta="carta" />
+            <Carta carta="carta"/>
         }
-    </ul>
+    </div>
+
+    <div class="mazo">
+        <p>Cartas: @Mazo</p>
+    </div>
 }
 
 @code {
@@ -28,7 +34,8 @@ else
 
     private List<EstadoCartaDTO> cartasJugador = new List<EstadoCartaDTO>();
     private int UsuarioPartidaId;
-
+    private int Mazo = 0;
+    private List<EstadoCartaDTO> cartasRival = new List<EstadoCartaDTO>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -39,6 +46,11 @@ else
             {
                 Sesion.UsuarioId = id;
                 await CargarPartida();
+
+                foreach (var carta in cartasJugador)
+                {
+                    Mazo++;
+                }
             }
             StateHasChanged();
         }
