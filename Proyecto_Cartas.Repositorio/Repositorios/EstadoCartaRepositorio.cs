@@ -196,6 +196,25 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
 
         }
 
+        public async Task<List<EstadoCartaDTO>> CartasEnCampo(int usuarioPartidaId)
+        {
+            var pos = await context.EstadosCarta
+                .Where(ec => ec.UsuarioPartidaID == usuarioPartidaId && (ec.Posicion == "Campo1" 
+                                                                            || ec.Posicion == "Campo2"
+                                                                            || ec.Posicion == "Campo3"))
+                .Select(ec => new EstadoCartaDTO
+                {
+                    Id = ec.Id,
+                    UsuarioPartidaID = ec.UsuarioPartidaID,
+                    InventarioID = ec.InventarioID,
+                    Nombre = ec.Nombre,
+                    Ataque = ec.Ataque,
+                    Vida = ec.Vida,
+                    Velocidad = ec.Velocidad,
+                    Posicion = ec.Posicion
+                }).ToListAsync();
+            return pos;
+        }
 
     }
 }
