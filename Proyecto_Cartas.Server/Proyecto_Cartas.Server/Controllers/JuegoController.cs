@@ -295,6 +295,21 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(estado);
         }
 
+        [HttpGet("estadoCarta/CartasEnCampo/{usuarioPartidaId:int}")] // api/estadoCarta/CartasEnCampo/{usuarioPartidaId})]
+        public async Task<ActionResult<List<EstadoCartaDTO>>> GetCartasEnCampo(int usuarioPartidaId)
+        {
+            var estado = await estadoCartaRepositorio.CartasEnCampo(usuarioPartidaId);
+            if (estado == null)
+            {
+                return NotFound($"No se encontró el dato con id {usuarioPartidaId}");
+            }
+            if (estado.Count == 0)
+            {
+                return Ok("No existen datos en este momento.");
+            }
+            return Ok(estado);
+        }
+
         [HttpPut("estadoCarta/robarCarta/{usuarioPartidaId:int}/{turnoId:int}")] // api/estadoCarta/robarCarta/{usuarioPartidaId}/{turnoId}
 
         public async Task<ActionResult<EstadoCartaDTO>> PutRobarCarta(int usuarioPartidaId, int turnoId)
