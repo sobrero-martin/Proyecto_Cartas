@@ -27,6 +27,15 @@ else
     <div class="mazo">
         <p>Cartas: @Mazo</p>
     </div>
+
+    <h3>Cartas del Rival:</h3>
+    <div class="testeo">
+        
+        @foreach (var carta in cartasRival)
+        {
+            <Carta carta="carta"/>
+        }
+    </div>
 }
 
 @code {
@@ -34,6 +43,7 @@ else
 
     private List<EstadoCartaDTO> cartasJugador = new List<EstadoCartaDTO>();
     private int UsuarioPartidaId;
+    private int RivalUsuarioPartidaId;
     private int Mazo = 0;
     private List<EstadoCartaDTO> cartasRival = new List<EstadoCartaDTO>();
 
@@ -80,10 +90,32 @@ else
             {
                 Console.WriteLine("Error al obtener las cartas.");
             }
+
+            var httpRespRivalId = await http.Get<int>($"api/Juego/usuarioPartida/{UsuarioPartidaId}");
+            if (!httpRespRivalId.Error)
+            {
+                RivalUsuarioPartidaId = httpRespRivalId.Respuesta;
+            }
+            else
+            {
+                Console.WriteLine("Error al obtener el perfil del rival.");
+            }
+
+            var httpRespRival = await http.Get<List<EstadoCartaDTO>>($"api/Juego/estadoCarta/usuario/{RivalUsuarioPartidaId}");
+            if(!httpRespRival.Error && httpRespRival.Respuesta != null)
+            {
+                cartasRival = httpRespRival.Respuesta;
+            }
+            else
+            {
+                Console.WriteLine("Error al obtener las cartas del rival.");
+            }
+
         }
         catch (Exception e)
         {
             Console.WriteLine($"Error al inicializar la partida: {e.Message}");
         }
     }
+
 }

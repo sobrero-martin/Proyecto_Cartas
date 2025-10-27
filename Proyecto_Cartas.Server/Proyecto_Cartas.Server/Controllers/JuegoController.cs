@@ -167,7 +167,18 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok("Partida cancelada correctamente.");
         }
 
+        [HttpGet("usuarioPartida/{usuarioPartidaId:int}")]
+        public async Task<ActionResult<int>> GetUsuarioPartidaRival(int usuarioPartidaId)
+        {
+            var rivalId = await usuarioPartidaRepositorio.BuscarUsuarioPartidaRival(usuarioPartidaId);
 
+            if (rivalId == 0)
+            {
+                return NotFound("No se encontró un rival para este usuario en la partida.");
+            }
+
+            return Ok(rivalId);
+        }
 
 
         // ENDPOINTS DE TESTEO

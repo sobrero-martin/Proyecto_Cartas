@@ -179,6 +179,20 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return usuarioPartida?.Id;
         }
 
+        public async Task<int> BuscarUsuarioPartidaRival(int usuarioPartidaId)
+        {
+            var usuarioPartida = await context.UsuariosPartida
+                                  .Include(up => up.Partida)
+                                  .Where(up => up.Id == usuarioPartidaId && up.Partida != null && up.Partida.Estado == "EnProgreso")
+                                  .FirstOrDefaultAsync();
+
+            var usuarioPartidaRival = await context.UsuariosPartida
+                                        .Where(up => up.PartidaID == usuarioPartida!.PartidaID && up.Id != usuarioPartidaId)
+                                        .FirstOrDefaultAsync();
+
+            return usuarioPartidaRival!.Id;
+        }
+
     }
 }
 
