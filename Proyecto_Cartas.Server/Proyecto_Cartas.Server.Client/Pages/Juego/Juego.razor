@@ -27,6 +27,18 @@ else
     <div class="mazo">
         <p>Cartas: @Mazo</p>
     </div>
+    <h3>Cartas en mano:</h3>
+    <div class="mano">
+        
+        @foreach (var carta in cartasMano)
+        {
+            <Carta carta="carta"/>
+        }
+    </div>
+
+    <button class="btn btn-primary" @onclick="RobarCarta">Robar Carta</button>
+
+    <button class="btn btn-secondary" @onclick="Actualizar">Actualizar</button>
 }
 
 @code {
@@ -35,7 +47,7 @@ else
     private List<EstadoCartaDTO> cartasJugador = new List<EstadoCartaDTO>();
     private int UsuarioPartidaId;
     private int Mazo = 0;
-    private List<EstadoCartaDTO> cartasRival = new List<EstadoCartaDTO>();
+    private List<EstadoCartaDTO> cartasMano = new List<EstadoCartaDTO>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -47,10 +59,7 @@ else
                 Sesion.UsuarioId = id;
                 await CargarPartida();
 
-                foreach (var carta in cartasJugador)
-                {
-                    Mazo++;
-                }
+                await CartasEnMazo();
             }
             StateHasChanged();
         }
@@ -71,6 +80,81 @@ else
                 Console.WriteLine("Error al obtener el perfil del usuario.");
             }
 
+            await CartasDelJugador();
+
+            await CartasEnMano();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error al inicializar la partida: {e.Message}");
+        }
+    }
+
+    private async Task CartasEnMano()
+    {
+        try
+        {
+            var httpResp = await http.Get<List<EstadoCartaDTO>>($"api/Juego/estadoCarta/filtrarPosicion/{UsuarioPartidaId}/Mano");
+            if(!httpResp.Error && httpResp.Respuesta != null)
+            {
+                cartasMano = httpResp.Respuesta;
+            }
+            else
+            {
+                Console.WriteLine("Error al obtener las cartas en mano.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error al obtener las cartas en mano: {e.Message}");
+        }
+    }
+
+    private async Task RobarCarta()
+    {
+        try
+        {
+            var httpResp = await httpClient.PutAsync($"api/Juego/estadoCarta/robarCarta/{UsuarioPartidaId}/1", null);
+            if (httpResp.IsSuccessStatusCode)
+            {
+                await Actualizar();
+            }
+            else
+            {
+                Console.WriteLine("Error al robar.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error al robar carta: {e.Message}");
+        }
+    }
+
+    private async Task CartasEnMazo()
+    {
+        try
+        {
+            var httpResp = await http.Get<List<EstadoCartaDTO>>($"api/Juego/estadoCarta/filtrarPosicion/{UsuarioPartidaId}/Mazo");
+            if (!httpResp.Error && httpResp.Respuesta != null)
+            {
+                Mazo = httpResp.Respuesta.Count();
+
+            }
+            else
+            {
+                Console.WriteLine("Error al obtener las cartas en el mazo.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error al obtener las cartas en el mazo: {e.Message}");
+        }
+    }
+
+    private async Task CartasDelJugador()
+    {
+        try 
+        { 
             var httpResp = await http.Get<List<EstadoCartaDTO>>($"api/Juego/estadoCarta/usuario/{UsuarioPartidaId}");
             if (!httpResp.Error && httpResp.Respuesta != null)
             {
@@ -79,11 +163,21 @@ else
             else
             {
                 Console.WriteLine("Error al obtener las cartas.");
-            }
+            } 
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Error al inicializar la partida: {e.Message}");
+            Console.WriteLine($"Error al obtener las cartas: {e.Message}");
         }
+   
+    }
+
+    private async Task Actualizar()
+    {
+        await CartasDelJugador();
+        await CartasEnMazo();
+        await CartasEnMano();
+        StateHasChanged();
+
     }
 }
