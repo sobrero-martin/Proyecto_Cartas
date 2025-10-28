@@ -78,6 +78,10 @@ else
         </div>
     </div>
 
+    <div class="cementerio">
+        <p>Cementerio: @Cementerio</p>
+    </div>
+
     <div class="mazo">
         <p>Cartas: @Mazo</p>
     </div>
@@ -108,6 +112,7 @@ else
     private List<EstadoCartaDTO> cartasEnCampoRival = new List<EstadoCartaDTO>();
     private EstadoCartaDTO? cartaSeleccionada = null;
     private HubConnection? hubConnection;
+    private int Cementerio = 0;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -219,6 +224,7 @@ else
         }
     }
 
+
     private void CartasEnCampo()
     {
         cartasEnCampo =  cartasJugador
@@ -286,6 +292,27 @@ else
         catch (Exception e)
         {
             Console.WriteLine($"Error al obtener las cartas en el mazo: {e.Message}");
+        }
+    }
+
+    private async Task CartasEnCementerio()
+    {
+        try
+        {
+            var httpResp = await http.Get<List<EstadoCartaDTO>>($"api/Juego/estadoCarta/filtrarPosicion/{UsuarioPartidaId}/Cementerio");
+            if (!httpResp.Error && httpResp.Respuesta != null)
+            {
+                Cementerio = httpResp.Respuesta.Count();
+
+            }
+            else
+            {
+                Console.WriteLine("Error al obtener las cartas en el cementerio.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error al obtener las cartas en el cementerio: {e.Message}");
         }
     }
 
