@@ -361,5 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-Proyecto_Cartas.Server/Proyecto_Cartas.Server/appsettings.Development.json
-/Proyecto_Cartas.Server/Proyecto_Cartas.Server/appsettings.Development.json
