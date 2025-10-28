@@ -88,7 +88,11 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         {
             defensor.Vida -= atacante.Ataque;
             if (defensor.Vida < 0)
+            {
                 defensor.Vida = 0;
+                await EnviarAlCementerio(defensor.UsuarioPartidaID, defensor.Id, turnoId);
+            }
+                
 
             var cartaDefensaDB = await context.EstadosCarta.FirstAsync(c => c.Id == defensor.Id);
             cartaDefensaDB.Vida = defensor.Vida;

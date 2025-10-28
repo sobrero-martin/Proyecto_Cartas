@@ -69,8 +69,8 @@ h1:focus {
     width: 160px;
     height: 255px;
     border-radius: 10px;
-    border: 1px solid black;
-    background: linear-gradient(180deg, #f8f8f8, #e0e0e0);
+    border: 1px solid #353941;
+    background:#26282B;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
@@ -83,12 +83,12 @@ h1:focus {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
-.carta img {
-    width: 100%;
-    height: 150px;
-    border-radius: 10px;
-    border: 2px solid black;
-}
+    .carta img {
+        width: 100%;
+        height: 150px;
+        border-radius: 10px;
+        border: 2px solid #26282B;
+    }
 
 .carta-body {
     margin-top: -10px;
@@ -108,8 +108,8 @@ h1:focus {
     width: 160px;
     height: 255px;
     border-radius: 10px;
-    border: 3px solid #555;
-    background: linear-gradient(180deg, #f8f8f8, #e0e0e0);
+    border: 1px solid #353941;
+    background: linear-gradient(180deg, #353941, #26282B);
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     transition: transform 0.2s, box-shadow 0.2s;
     display: flex;
@@ -132,8 +132,8 @@ h1:focus {
     width: 160px;
     height: 255px;
     border-radius: 10px;
-    border: 3px solid #555;
-    background: linear-gradient(180deg, #f8f8f8, #e0e0e0);
+    border: 1px solid #353941;
+    background: linear-gradient(180deg, #353941, #26282B);
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     transition: transform 0.2s, box-shadow 0.2s;
     margin-right: 5px;
@@ -151,4 +151,47 @@ h1:focus {
     display: flex;
     flex-direction: row;
     justify-content: center;
+}
+
+
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #26282B;
+    color: #90B8F8;
+}
+
+
+
+.nav-scrollable {
+    background-color: #353941;
+}
+
+.top-row {
+    background-color: #353941 !important;
+}
+
+    .top-row.navbar {
+        background-color: #26282B !important;
+    }
+
+.nav-link {
+    color: #90B8F8 !important;
+}
+
+    .nav-link.active {
+        color: #5F85DB !important;
+        background-color: #26282B !important;
+    }
+
+.loginInput {
+    background-color: #353941;
+    color: #90B8F8;
+}
+
+.btn {
+    background-color: #353941 !important;
+    color: #90B8F8;
+    
 }

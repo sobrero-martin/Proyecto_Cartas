@@ -10,12 +10,12 @@
 <br />
 <form>
     <label for="email">Email:</label><br />
-    <input type="email" @bind="Email" placeholder="Enter your email" /><br />
+    <input class="loginInput" type="email" @bind="Email" placeholder="Enter your email" /><br />
     <br />
     <label for="password">Password:</label><br />
-    <input type="password" @bind="Password" placeholder="Enter your password" /><br />
+    <input class="loginInput" type="password" @bind="Password" placeholder="Enter your password" /><br />
     <br />
-    <button type="button" @onclick="OnLogin">Login</button> <button type="button" @onclick="OnRegister">Register</button>
+    <button class="btn loginButton" type="button" @onclick="OnLogin">Login</button> <button class="btn loginButton" type="button" @onclick="OnRegister">Register</button>
     <br />
     <p style="margin: 20px">@LoginStatus</p>
 </form>

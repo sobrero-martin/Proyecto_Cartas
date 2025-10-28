@@ -126,7 +126,7 @@ else
 
                 hubConnection.On("ActualizarPartida", async () =>
                 {
-                    await Actualizar();
+                    await InvokeAsync(Actualizar);
                 });
 
                 await hubConnection.StartAsync();
@@ -348,6 +348,5 @@ else
         CartasEnCampo();
         CartasEnCampoRival();
         StateHasChanged();
-
     }
 }
