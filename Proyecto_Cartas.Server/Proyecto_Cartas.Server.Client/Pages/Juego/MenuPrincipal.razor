@@ -18,7 +18,7 @@
 
 @if (mostrarPopupConfirmar)
 {
-    <div style="position: fixed; top: 20px; right: 20px; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
+    <div style="position: fixed; color:#26282B ;top: 20px; right: 20px; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
         @notificacion
         <button class="btn btn-primary" @onclick="ConfirmarPartida">Confirmar</button><button class="btn btn-secondary">Rechazar</button>
     </div>
@@ -148,7 +148,7 @@
             }
 
 
-            var respPartidaComenzada = await http.Get<bool>($"https://localhost:7192/api/juego/revisarPartida/{respPartida.Respuesta}");
+            var respPartidaComenzada = await http.Get<int>($"https://localhost:7192/api/juego/revisarPartida/{respPartida.Respuesta}");
             navHttp.NavigateTo($"/juego/{respPartida.Respuesta}");
 
         }

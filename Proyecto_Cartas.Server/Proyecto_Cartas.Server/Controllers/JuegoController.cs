@@ -184,10 +184,6 @@ namespace Proyecto_Cartas.Server.Controllers
         public async Task <ActionResult<int>> RevisarPartida(int perfilUsuarioId)
         {
             var partidaId = await usuarioPartidaRepositorio.JugadorPartida(perfilUsuarioId);
-            if (partidaId == 0)
-            {
-                return NotFound("El jugador no está en ninguna partida.");
-            }
             return Ok(partidaId);
         }
 
