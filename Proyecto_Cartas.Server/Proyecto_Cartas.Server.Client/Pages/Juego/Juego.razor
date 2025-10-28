@@ -14,6 +14,15 @@
 }
 else
 {
+    <h3>Cartas del Rival:</h3>
+    <div class="testeo">
+        @foreach(var carta in cartasRival)
+        {
+            <Carta carta="carta"/>
+        }
+    </div>
+
+
     <h3>Cartas del Jugador:</h3>
 
     <div class="testeo">
@@ -48,6 +57,7 @@ else
     private int UsuarioPartidaId;
     private int Mazo = 0;
     private List<EstadoCartaDTO> cartasMano = new List<EstadoCartaDTO>();
+    private List<EstadoCartaDTO> cartasRival = new List<EstadoCartaDTO>();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -81,6 +91,8 @@ else
             }
 
             await CartasDelJugador();
+
+            await CartasDelRival();
 
             await CartasEnMano();
         }
@@ -169,12 +181,42 @@ else
         {
             Console.WriteLine($"Error al obtener las cartas: {e.Message}");
         }
-   
+
+    }
+
+    private async Task CartasDelRival()
+    {
+        try
+        {
+            var httpRespRivalId = await http.Get<int>($"api/Juego/usuarioPartida/{UsuarioPartidaId}");
+            if (!httpRespRivalId.Error)
+            {
+                var rivalId = httpRespRivalId.Respuesta;
+                var httpResp = await http.Get<List<EstadoCartaDTO>>($"api/Juego/estadoCarta/usuario/{rivalId}");
+                if (!httpResp.Error && httpResp.Respuesta != null)
+                {
+                    cartasRival = httpResp.Respuesta;
+                }
+                else
+                {
+                    Console.WriteLine("Error al obtener las cartas.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Error al obtener el ID del rival.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error al obtener las cartas del rival: {e.Message}");
+        }
     }
 
     private async Task Actualizar()
     {
         await CartasDelJugador();
+        await CartasDelRival();
         await CartasEnMazo();
         await CartasEnMano();
         StateHasChanged();
