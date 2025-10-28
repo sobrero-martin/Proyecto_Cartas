@@ -407,5 +407,27 @@ namespace Proyecto_Cartas.Server.Controllers
 
             return Ok(turno);
         }
+
+        [HttpGet("cartasEnCampo/{idPartida:int}")]
+        public async Task<ActionResult<List<EstadoCartaDTO>>> GetCartasEnCampoDePartida(int idPartida)
+        {
+            var cartasEnCampo = await estadoCartaRepositorio.ObtenerCartasEnCampo(idPartida);
+            if (cartasEnCampo == null)
+            {
+                return NotFound("No se encontraron cartas en el campo para esta partida.");
+            }
+            return Ok(cartasEnCampo);
+        }
+
+        [HttpPost("batalla/{partidaId:int}/{turnoId:int}")]
+        public async Task<ActionResult<List<Evento>>> Batalla(int partidaId, int turnoId)
+        {
+            var eventos = await estadoCartaRepositorio.Batalla(partidaId, turnoId);
+            if (eventos == null || eventos.Count == 0)
+            {
+                return NotFound("No se generaron eventos de batalla.");
+            }
+            return Ok(eventos);
+        }
     }
 }

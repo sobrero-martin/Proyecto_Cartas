@@ -14,13 +14,99 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
     {
         private readonly AppDbContext context;
         private readonly IEventoRepositorio eventoRepositorio;
-
         public EstadoCartaRepositorio(AppDbContext context, IEventoRepositorio eventoRepositorio) : base(context)
         {
             this.context = context;
             this.eventoRepositorio = eventoRepositorio;
         }
 
+        public async Task<List<EstadoCartaDTO>> ObtenerCartasEnCampo(int idPartida)
+        {
+            var posicionesCampo = new[] { "Campo1", "Campo2", "Campo3" };
+
+            return await context.EstadosCarta
+                .Where(c =>
+                    c.UsuarioPartida!.Partida!.Id == idPartida &&
+                    posicionesCampo.Contains(c.Posicion) &&
+                    c.Vida > 0)
+                .Select(c => new EstadoCartaDTO
+                {
+                    Id = c.Id,
+                    Nombre = c.Nombre,
+                    Ataque = c.Ataque,
+                    Vida = c.Vida,
+                    Velocidad = c.Velocidad,
+                    Posicion = c.Posicion,
+                    UsuarioPartidaID = c.UsuarioPartidaID
+                })
+                .OrderByDescending(c => c.Velocidad)
+                .ToListAsync();
+        }
+
+        public async Task<List<Evento>> Batalla(int idPartida, int turnoId)
+        {
+            var cartas = await ObtenerCartasEnCampo(idPartida);
+
+            var prioridades = new Dictionary<string, string[]>
+            {
+                { "Campo1", new[] { "Campo1", "Campo2", "Campo3" } },
+                { "Campo2", new[] { "Campo2", "Campo1", "Campo3" } },
+                { "Campo3", new[] { "Campo3", "Campo2", "Campo1" } }
+            };
+
+            var eventos = new List<Evento>();
+
+            foreach(var atacante in cartas)
+            {
+                if (atacante.Vida <= 0)
+                    continue;
+
+                EstadoCartaDTO? defensor = null;
+
+                foreach (var pos in prioridades[atacante.Posicion])
+                {
+                    defensor = cartas
+                        .FirstOrDefault(c =>
+                        c.UsuarioPartidaID != atacante.UsuarioPartidaID &&
+                        c.Posicion == pos &&
+                        c.Vida > 0);
+
+                    if (defensor != null)
+                            break;
+                }
+
+                if (defensor != null)
+                {
+                    var evento = await Ataque(atacante, defensor, turnoId);
+                    eventos.Add(evento);
+                }
+            }
+            return eventos;
+        }
+
+        public async Task<Evento> Ataque (EstadoCartaDTO atacante, EstadoCartaDTO defensor, int turnoId)
+        {
+            defensor.Vida -= atacante.Ataque;
+            if (defensor.Vida < 0)
+                defensor.Vida = 0;
+
+            var cartaDefensaDB = await context.EstadosCarta.FirstAsync(c => c.Id == defensor.Id);
+            cartaDefensaDB.Vida = defensor.Vida;
+
+            var evento = new Evento
+            {
+                TurnoID = turnoId,
+                EstadoCartaID = atacante.Id,
+                Accion = "Ataque",
+                Origen = atacante.Nombre,
+                Destino = defensor.Nombre
+            };
+
+            context.Eventos.Add(evento);
+            await context.SaveChangesAsync();
+
+            return evento;
+        }
 
         public async Task<List<EstadoCartaDTO>> EstadoCartaDeUnUsuario(int usuarioPartidaId)
         {
