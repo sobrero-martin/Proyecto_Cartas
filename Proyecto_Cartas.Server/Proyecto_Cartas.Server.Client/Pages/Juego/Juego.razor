@@ -22,7 +22,6 @@ else
         }
     </div>
 
-
     <h3>Cartas del Jugador:</h3>
 
     <div class="testeo">
@@ -33,6 +32,28 @@ else
         }
     </div>
 
+    <div class="tablero">
+        <h3>Tablero Jugador:</h3>
+        <div class="campo" @onclick="@(() => ColocarCarta("Campo1"))">
+            @foreach (var carta in cartasEnCampo.Where(c => c.Posicion == "Campo1"))
+            {
+                <Carta carta="carta" />
+            }
+        </div>
+        <div class="campo" @onclick="@(() => ColocarCarta("Campo2"))">
+            @foreach (var carta in cartasEnCampo.Where(c => c.Posicion == "Campo2"))
+            {
+                <Carta carta="carta" />
+            }
+        </div>
+        <div class="campo" @onclick="@(() => ColocarCarta("Campo3"))">
+            @foreach (var carta in cartasEnCampo.Where(c => c.Posicion == "Campo3"))
+            {
+                <Carta carta="carta" />
+            }
+        </div>
+    </div>
+
     <div class="mazo">
         <p>Cartas: @Mazo</p>
     </div>
@@ -41,9 +62,10 @@ else
         
         @foreach (var carta in cartasMano)
         {
-            <Carta carta="carta"/>
+            <Carta carta="carta" OnCartaClick="SeleccionarCarta"/>
         }
     </div>
+
 
     <button class="btn btn-primary" @onclick="RobarCarta">Robar Carta</button>
 
@@ -58,6 +80,8 @@ else
     private int Mazo = 0;
     private List<EstadoCartaDTO> cartasMano = new List<EstadoCartaDTO>();
     private List<EstadoCartaDTO> cartasRival = new List<EstadoCartaDTO>();
+    private List<EstadoCartaDTO> cartasEnCampo = new List<EstadoCartaDTO>();
+    private EstadoCartaDTO? cartaSeleccionada = null;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -69,10 +93,29 @@ else
                 Sesion.UsuarioId = id;
                 await CargarPartida();
 
-                await CartasEnMazo();
             }
             StateHasChanged();
         }
+    }
+
+    private void SeleccionarCarta(EstadoCartaDTO carta)
+    {
+        cartaSeleccionada = carta;
+        StateHasChanged();
+    }
+
+    private async Task ColocarCarta(string campoDestino)
+    {
+        if (cartaSeleccionada == null)
+            return;
+
+        cartaSeleccionada.Posicion = campoDestino;
+
+        var resp = await httpClient.PutAsync($"api/Juego/estadoCarta/colocarEnCampo/{UsuarioPartidaId}/{cartaSeleccionada.Id}/{campoDestino}/{1}", null);
+
+        cartaSeleccionada = null;
+        await Actualizar();
+        StateHasChanged();
     }
 
     private async Task CargarPartida()
@@ -95,6 +138,10 @@ else
             await CartasDelRival();
 
             await CartasEnMano();
+
+            await CartasEnMazo();
+
+            CartasEnCampo();
         }
         catch (Exception e)
         {
@@ -120,6 +167,20 @@ else
         {
             Console.WriteLine($"Error al obtener las cartas en mano: {e.Message}");
         }
+    }
+
+    private void CartasEnCampo()
+    {
+        cartasEnCampo =  cartasJugador
+                    .Where(c => c.Posicion == "Campo1" || c.Posicion == "Campo2" || c.Posicion == "Campo3")
+                    .OrderBy(c =>
+                        c.Posicion switch
+                        {
+                            "Campo1" => 1,
+                            "Campo2" => 2,
+                            "Campo3" => 3,
+                            _ => 4
+                        }).ToList();
     }
 
     private async Task RobarCarta()
@@ -219,6 +280,7 @@ else
         await CartasDelRival();
         await CartasEnMazo();
         await CartasEnMano();
+        CartasEnCampo();
         StateHasChanged();
 
     }

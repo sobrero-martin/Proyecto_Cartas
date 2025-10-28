@@ -201,7 +201,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return cartaRobada;
         }
 
-        public async Task<EstadoCartaDTO?> ColocarEnCampo(int usuarioPartidaId, int cartaId, int lugar, int turnoId)
+        public async Task<EstadoCartaDTO?> ColocarEnCampo(int usuarioPartidaId, int cartaId, string lugar, int turnoId)
         {
             var cartaSeleccionada = await context.EstadosCarta
                 .FirstOrDefaultAsync(ec =>
@@ -217,7 +217,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                                      .FirstOrDefaultAsync(c => c.UsuarioPartidaID == usuarioPartidaId && c.Posicion == $"Campo{lugar}");
             if (campoOcupado != null) return null; // La posicion del campo ya esta ocupada
 
-            var cartaEnCampo = await CambiarPosicion(cartaSeleccionada.Id, $"Campo{lugar}", turnoId, "Colocaren Campo");
+            var cartaEnCampo = await CambiarPosicion(cartaSeleccionada.Id, lugar, turnoId, "Colocar en Campo");
             return cartaEnCampo;
         }
 

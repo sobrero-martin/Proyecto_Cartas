@@ -8,7 +8,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         Task<List<Evento>> Batalla(int idPartida, int turnoId);
         Task<EstadoCartaDTO?> CambiarPosicion(int id, string nuevaPosicion, int turnoId, string accion);
         Task<List<EstadoCartaDTO>> CartasEnCampo(int usuarioPartidaId);
-        Task<EstadoCartaDTO?> ColocarEnCampo(int usuarioPartidaId, int cartaId, int lugar, int turnoId);
+        Task<EstadoCartaDTO?> ColocarEnCampo(int usuarioPartidaId, int cartaId, string lugar, int turnoId);
         Task<EstadoCartaDTO?> EnviarAlCementerio(int usuarioPartidaId, int cartaId, int turnoId);
         Task<List<EstadoCartaDTO>> EstadoCartaDeUnUsuario(int usuarioPartidaId);
         Task<List<EstadoCartaDTO>> FiltrarPosicion(int usuarioPartidaId, string posicion);

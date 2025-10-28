@@ -344,9 +344,9 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(estado);
         }
 
-        [HttpPut("estadoCarta/colocarEnCampo/{usuarioPartidaId:int}/{cartaId:int}/{lugar:int}/{turnoId:int}")] // api/estadoCarta/colocarEnCampo/{usuarioPartidaId}/{cartaId}/{lugar}/{turnoId}
+        [HttpPut("estadoCarta/colocarEnCampo/{usuarioPartidaId:int}/{cartaId:int}/{lugar}/{turnoId:int}")] // api/estadoCarta/colocarEnCampo/{usuarioPartidaId}/{cartaId}/{lugar}/{turnoId}
 
-        public async Task<ActionResult<EstadoCartaDTO>> PutColocarEnCampo(int usuarioPartidaId, int cartaId, int lugar, int turnoId)
+        public async Task<ActionResult<EstadoCartaDTO>> PutColocarEnCampo(int usuarioPartidaId, int cartaId, string lugar, int turnoId)
         {
             var estado = await estadoCartaRepositorio.ColocarEnCampo(usuarioPartidaId, cartaId, lugar, turnoId);
             if (estado == null)
