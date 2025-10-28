@@ -13,5 +13,10 @@ namespace Proyecto_Cartas.Server.Hubs
         {
             await Clients.Group($"Partida-{partidaId}").SendAsync("RecibirNotificacionPartida", mensaje);
         }
+
+        public async Task ActualizarPartida(int partidaId)
+        {
+            await Clients.Group($"partida-{partidaId}").SendAsync("ActualizarPartida");
+        }
     }
 }

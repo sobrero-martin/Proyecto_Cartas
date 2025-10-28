@@ -53,7 +53,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         {
             return await context.UsuariosPartida
                 .Where(p => p.PerfilUsuarioID == perfilUsuarioId && p.Partida!.Estado == "EnProgreso")
-                .Select(p => p.Id)
+                .Select(p => p.PartidaID)
                 .FirstOrDefaultAsync();
         }
 

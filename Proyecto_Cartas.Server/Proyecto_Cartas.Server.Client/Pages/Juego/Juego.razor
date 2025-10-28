@@ -4,6 +4,7 @@
 @inject HttpClient httpClient
 @inject IJSRuntime js
 
+
 <PageTitle>Partida</PageTitle>
 
 <h1>Partida #@PartidaId</h1>
@@ -31,6 +32,29 @@ else
             <Carta carta="carta"/>
         }
     </div>
+
+    <div class="tablero">
+        <h3>Tablero Rival:</h3>
+        <div class="campo" @onclick="@(() => ColocarCarta("Campo1"))">
+            @foreach (var carta in cartasEnCampoRival.Where(c => c.Posicion == "Campo1"))
+            {
+                <Carta carta="carta" />
+            }
+        </div>
+        <div class="campo" @onclick="@(() => ColocarCarta("Campo2"))">
+            @foreach (var carta in cartasEnCampoRival.Where(c => c.Posicion == "Campo2"))
+            {
+                <Carta carta="carta" />
+            }
+        </div>
+        <div class="campo" @onclick="@(() => ColocarCarta("Campo3"))">
+            @foreach (var carta in cartasEnCampoRival.Where(c => c.Posicion == "Campo3"))
+            {
+                <Carta carta="carta" />
+            }
+        </div>
+    </div>
+
 
     <div class="tablero">
         <h3>Tablero Jugador:</h3>
@@ -81,7 +105,9 @@ else
     private List<EstadoCartaDTO> cartasMano = new List<EstadoCartaDTO>();
     private List<EstadoCartaDTO> cartasRival = new List<EstadoCartaDTO>();
     private List<EstadoCartaDTO> cartasEnCampo = new List<EstadoCartaDTO>();
+    private List<EstadoCartaDTO> cartasEnCampoRival = new List<EstadoCartaDTO>();
     private EstadoCartaDTO? cartaSeleccionada = null;
+    private HubConnection? hubConnection;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -92,6 +118,24 @@ else
             {
                 Sesion.UsuarioId = id;
                 await CargarPartida();
+
+                hubConnection = new HubConnectionBuilder()
+                 .WithUrl("https://localhost:7192/juegoHub")
+                 .WithAutomaticReconnect()
+                 .Build();
+
+                hubConnection.On("ActualizarPartida", async () =>
+                {
+                    await Actualizar();
+                });
+
+                await hubConnection.StartAsync();
+
+
+                if (hubConnection != null)
+                {
+                    await hubConnection.InvokeAsync("UnirsePartida", PartidaId);
+                }
 
             }
             StateHasChanged();
@@ -114,7 +158,11 @@ else
         var resp = await httpClient.PutAsync($"api/Juego/estadoCarta/colocarEnCampo/{UsuarioPartidaId}/{cartaSeleccionada.Id}/{campoDestino}/{1}", null);
 
         cartaSeleccionada = null;
-        await Actualizar();
+        if (hubConnection != null)
+        {
+            await hubConnection.InvokeAsync("ActualizarPartida", PartidaId);
+        }
+
         StateHasChanged();
     }
 
@@ -142,6 +190,8 @@ else
             await CartasEnMazo();
 
             CartasEnCampo();
+
+            CartasEnCampoRival();
         }
         catch (Exception e)
         {
@@ -182,6 +232,21 @@ else
                             _ => 4
                         }).ToList();
     }
+
+    private void CartasEnCampoRival()
+    {
+        cartasEnCampoRival = cartasRival
+                    .Where(c => c.Posicion == "Campo1" || c.Posicion == "Campo2" || c.Posicion == "Campo3")
+                    .OrderBy(c =>
+                        c.Posicion switch
+                        {
+                            "Campo1" => 1,
+                            "Campo2" => 2,
+                            "Campo3" => 3,
+                            _ => 4
+                        }).ToList();
+    }
+
 
     private async Task RobarCarta()
     {
@@ -281,6 +346,7 @@ else
         await CartasEnMazo();
         await CartasEnMano();
         CartasEnCampo();
+        CartasEnCampoRival();
         StateHasChanged();
 
     }
