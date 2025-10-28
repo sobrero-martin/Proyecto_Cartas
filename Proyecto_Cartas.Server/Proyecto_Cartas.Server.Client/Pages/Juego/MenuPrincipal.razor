@@ -11,6 +11,11 @@
 
 <button class="btn btn-success" @onclick="BuscarPartida" disabled="@buscandoPartida">@mensajeEstado</button>
 
+@if(partidaIdEnCurso != 0)
+{
+    <p>Tienes una partida en curso. <a href="@($"/juego/{partidaIdEnCurso}")">Continuar partida #@partidaIdEnCurso</a></p>
+}
+
 @if (mostrarPopupConfirmar)
 {
     <div style="position: fixed; top: 20px; right: 20px; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
@@ -32,6 +37,7 @@
     private HubConnection? hubConnection;
     BuscarPartidaSolicitudDTO buscarPartida = new BuscarPartidaSolicitudDTO { PerfilUsuarioId = 0 };
     private string notificacion = string.Empty;
+    private int partidaIdEnCurso = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,6 +51,13 @@
                 PerfilUsuarioId = perfilUsuarioId
             };
         }
+
+        var httpRespPartida = await http.Get<int>($"api/Juego/revisarPartida/{perfilUsuarioId}");
+        if (!httpRespPartida.Error && httpRespPartida.Respuesta != 0)
+        {
+            partidaIdEnCurso = httpRespPartida.Respuesta;
+        }
+
         hubConnection = new HubConnectionBuilder()
            .WithUrl("https://localhost:7192/juegoHub")
            .WithAutomaticReconnect()

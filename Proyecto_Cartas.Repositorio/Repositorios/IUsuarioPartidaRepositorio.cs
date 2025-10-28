@@ -7,6 +7,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
     {
         Task AgregarJugador(Partida partida, int jugadorId);
         Task<bool> JugadorYaEnPartida(int perfilUsuarioId);
+        Task<int> JugadorPartida(int perfilUsuarioId);
         Task<int> ContarJugadoresEnPartida(int partidaId);
         Task<List<UsuarioPartida>> ObtenerJugadoresEnPartida(int partidaId);
         Task<bool> CancelarPartida(int perfilUsuarioId);

@@ -84,7 +84,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return eventos;
         }
 
-        public async Task<Evento> Ataque (EstadoCartaDTO atacante, EstadoCartaDTO defensor, int turnoId)
+        public async Task<Evento> Ataque(EstadoCartaDTO atacante, EstadoCartaDTO defensor, int turnoId)
         {
             defensor.Vida -= atacante.Ataque;
             if (defensor.Vida < 0)

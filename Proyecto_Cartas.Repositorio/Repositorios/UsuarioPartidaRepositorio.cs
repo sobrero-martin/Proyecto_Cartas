@@ -49,6 +49,14 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 .AnyAsync(p => p.PerfilUsuarioID == perfilUsuarioId && p.Partida!.Estado == "EnProgreso");
         }
 
+        public async Task<int> JugadorPartida(int perfilUsuarioId)
+        {
+            return await context.UsuariosPartida
+                .Where(p => p.PerfilUsuarioID == perfilUsuarioId && p.Partida!.Estado == "EnProgreso")
+                .Select(p => p.Id)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<int> ContarJugadoresEnPartida(int partidaId)
         {
             return await context.UsuariosPartida
