@@ -46,6 +46,8 @@ builder.Services.AddScoped<ICartaAperturaRepositorio, CartaAperturaRepositorio>(
 builder.Services.AddScoped<SesionUsuario>();
 builder.Services.AddScoped<IHttpServicio, HttpServicio>();
 
+builder.Services.AddServerSideBlazor().AddCircuitOptions(opt => { opt.DetailedErrors = true; });
+
 builder.Services.AddHttpClient();
 
 // Add services to the container.

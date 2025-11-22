@@ -1,0 +1,52 @@
+﻿@page "/crearPerfil"
+@inject IHttpServicio http
+@inject SesionUsuario Sesion
+@inject NavigationManager navHttp
+
+<h3>CrearPerfil</h3>
+
+<label>Nombre de perfil:</label>
+<input @bind="nombre" class="form-control"/>
+
+<label>Bio:</label>
+<textarea @bind="bio" class="form-control"></textarea>
+
+<button class="btn btn-success" @onclick="crearPerfil">Crear</button>
+
+<p>@estado</p>
+
+@code {
+    private string nombre = string.Empty;
+    private string bio = string.Empty;
+    private string estado = string.Empty;
+
+    private async Task crearPerfil()
+    {
+        estado = "Creando perfil...";
+
+        var dto = new PerfilUsuarioCreateDTO
+        {
+            Nombre = nombre,
+            Bio = bio,
+            UsuarioID = Sesion.UsuarioId
+        };
+
+        var resp = await http.Post<PerfilUsuarioCreateDTO, int>("api/PerfilUsuario", dto);
+
+        if (!resp.Error)
+        {
+            var perfil = await http.Get<PerfilUsuarioDTO>($"api/PerfilUsuario/porUsuario/{Sesion.UsuarioId}");
+
+            if (!perfil.Error && perfil.Respuesta != null)
+            {
+                Sesion.UsuarioId = perfil.Respuesta.Id;
+            }
+
+            navHttp.NavigateTo("/menuPrincipal");
+        }
+        else
+        {
+            estado = "Error al crear el perfil";
+        }
+    }
+}

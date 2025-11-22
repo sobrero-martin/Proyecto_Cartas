@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11217.181 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Proyecto_Cartas.Server", "Proyecto_Cartas.Server\Proyecto_Cartas.Server\Proyecto_Cartas.Server.csproj", "{AF3A6DBD-FD20-4383-8719-EAB8B9EA8234}"
 EndProject

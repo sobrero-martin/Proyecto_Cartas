@@ -7,7 +7,9 @@
 
 <h1>Menú Principal</h1>
 
+
 <p>Bienvenido, @nombreUsuario</p>
+
 
 <button class="btn btn-success" @onclick="BuscarPartida" disabled="@buscandoPartida">@mensajeEstado</button>
 
@@ -41,6 +43,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+
         var httpResp = await http.Get<PerfilUsuarioDTO>($"https://localhost:7192/api/PerfilUsuario/{Sesion.UsuarioId}");
         if (!httpResp.Error && httpResp.Respuesta != null)
         {
@@ -75,6 +78,7 @@
         });
 
         await hubConnection.StartAsync();
+
 
     }
 

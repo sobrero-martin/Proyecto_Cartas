@@ -213,3 +213,36 @@ body {
     color: #90B8F8;
     
 }
+
+.partida {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    margin-bottom: 200px;
+}
+
+.cementerio {
+    position: fixed;
+    right: 5%;
+    bottom: 5%;
+}
+
+.mazo {
+    position: fixed;
+    left: 15%;
+    bottom: 5%;
+}
+
+.mano {
+    position: fixed;
+    bottom: 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+

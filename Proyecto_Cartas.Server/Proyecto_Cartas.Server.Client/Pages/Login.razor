@@ -60,8 +60,19 @@
                 await js.InvokeVoidAsync("localStorage.setItem", "UsuarioId", id.ToString());
 
                 LoginStatus = "✅ Login successful!";
-              
-                navHttp.NavigateTo("/menuPrincipal");
+
+                var perfilResp = await http.Get<PerfilUsuarioDTO>($"api/PerfilUsuario/{id}");
+
+                if (!perfilResp.Error && perfilResp.Respuesta != null)
+                {
+                    navHttp.NavigateTo($"/menuPrincipal");
+                }
+                else
+                {
+                    navHttp.NavigateTo($"/crearPerfil");
+                }
+
+                return;
             }   
         }
         else
