@@ -8,7 +8,8 @@ namespace Proyecto_Cartas.Shared.DTO
 {
     public class InventarioDTO
     {
-        public int UsuarioId { get; set; }
+        public int PerfilUsuarioId { get; set; }
         public int CartaId { get; set; }
+        public string Tipo { get; set; } = string.Empty;
     }
 }

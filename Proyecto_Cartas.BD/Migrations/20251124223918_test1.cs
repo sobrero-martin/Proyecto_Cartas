@@ -177,33 +177,6 @@ namespace Proyecto_Cartas.BD.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Inventarios",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UsuarioID = table.Column<int>(type: "int", nullable: false),
-                    CartaID = table.Column<int>(type: "int", nullable: false),
-                    EstadoRegistro = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Inventarios", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Inventarios_Cartas_CartaID",
-                        column: x => x.CartaID,
-                        principalTable: "Cartas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Inventarios_Usuarios_UsuarioID",
-                        column: x => x.UsuarioID,
-                        principalTable: "Usuarios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "PerfilesUsuario",
                 columns: table => new
                 {
@@ -277,6 +250,34 @@ namespace Proyecto_Cartas.BD.Migrations
                         name: "FK_ComprasSobre_Sobres_SobreID",
                         column: x => x.SobreID,
                         principalTable: "Sobres",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Inventarios",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PerfilUsuarioID = table.Column<int>(type: "int", nullable: false),
+                    CartaID = table.Column<int>(type: "int", nullable: false),
+                    Tipo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EstadoRegistro = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Inventarios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Inventarios_Cartas_CartaID",
+                        column: x => x.CartaID,
+                        principalTable: "Cartas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Inventarios_PerfilesUsuario_PerfilUsuarioID",
+                        column: x => x.PerfilUsuarioID,
+                        principalTable: "PerfilesUsuario",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -496,9 +497,9 @@ namespace Proyecto_Cartas.BD.Migrations
                 column: "CartaID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Inventarios_UsuarioID",
+                name: "IX_Inventarios_PerfilUsuarioID",
                 table: "Inventarios",
-                column: "UsuarioID");
+                column: "PerfilUsuarioID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PerfilesUsuario_UsuarioID",

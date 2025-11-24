@@ -18,6 +18,18 @@ namespace Proyecto_Cartas.Server.Controllers
             this.repositorio = repositorio;
         }
 
+
+        [HttpPost("MazoInicial/{perfilUsuarioId:int}/{opcion:int}")]
+        public async Task<IActionResult> MazoInicial(int perfilUsuarioId, int opcion)
+        {
+            bool exito = await repositorio.MazoInicial(perfilUsuarioId, opcion);
+            if (!exito)
+            {
+                return BadRequest("El ");
+            }
+            return Ok("Mazo inicial asignado");
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -25,8 +37,9 @@ namespace Proyecto_Cartas.Server.Controllers
 
             var result = entities.Select(i => new InventarioDTO
             {
-                UsuarioId = i.UsuarioID,
-                CartaId = i.CartaID
+                PerfilUsuarioId = i.PerfilUsuarioID,
+                CartaId = i.CartaID,
+                Tipo = i.Tipo
             });
 
             return Ok(result);
@@ -37,8 +50,9 @@ namespace Proyecto_Cartas.Server.Controllers
         {
             var inventario = new Inventario
             {
-                UsuarioID = dto.UsuarioId,
-                CartaID = dto.CartaId
+                PerfilUsuarioID = dto.PerfilUsuarioId,
+                CartaID = dto.CartaId,
+                Tipo = dto.Tipo
             };
 
             await repositorio.Post(inventario);
@@ -52,12 +66,14 @@ namespace Proyecto_Cartas.Server.Controllers
             var entity = await repositorio.GetById(id);
             if (entity == null) return NotFound();
 
-            entity.UsuarioID = dto.UsuarioId;
+            entity.PerfilUsuarioID = dto.PerfilUsuarioId;
             entity.CartaID = dto.CartaId;
+            entity.Tipo = dto.Tipo;
 
             await repositorio.Post(entity);
 
             return NoContent();
         }
+
     }
 }

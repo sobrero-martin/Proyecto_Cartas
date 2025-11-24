@@ -332,14 +332,18 @@ namespace Proyecto_Cartas.BD.Migrations
                     b.Property<int>("EstadoRegistro")
                         .HasColumnType("int");
 
-                    b.Property<int>("UsuarioID")
+                    b.Property<int>("PerfilUsuarioID")
                         .HasColumnType("int");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CartaID");
 
-                    b.HasIndex("UsuarioID");
+                    b.HasIndex("PerfilUsuarioID");
 
                     b.ToTable("Inventarios");
                 });
@@ -702,15 +706,15 @@ namespace Proyecto_Cartas.BD.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.Usuario", "Usuario")
+                    b.HasOne("Proyecto_Cartas.BD.Datos.Entidades.PerfilUsuario", "PerfilUsuario")
                         .WithMany()
-                        .HasForeignKey("UsuarioID")
+                        .HasForeignKey("PerfilUsuarioID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Carta");
 
-                    b.Navigation("Usuario");
+                    b.Navigation("PerfilUsuario");
                 });
 
             modelBuilder.Entity("Proyecto_Cartas.BD.Datos.Entidades.PerfilUsuario", b =>

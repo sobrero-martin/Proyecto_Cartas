@@ -4,5 +4,6 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
 {
     public interface IInventarioRepositorio : IRepositorio<Inventario>
     {
+        Task<bool> MazoInicial(int usuarioId, int opcion);
     }
 }
