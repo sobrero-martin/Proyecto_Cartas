@@ -153,18 +153,24 @@ namespace Proyecto_Cartas.Server.Controllers
         }
 
         [HttpPost("cancelarPartida")]
-        public async Task<ActionResult> CancelarPartida(int perfilUsuarioId)
+        public async Task<ActionResult<MensajeRespuestaDTO>> CancelarPartida([FromBody]int perfilUsuarioId)
         {
             var exito = await usuarioPartidaRepositorio.CancelarPartida(perfilUsuarioId);
 
             if (!exito)
             {
-                return BadRequest("No estás jugando o buscando una partida.");
+                return BadRequest(new MensajeRespuestaDTO
+                {
+                   Mensaje = "Error al cancelar la partida."
+                });
             }
 
             await hubContext.Clients.All.SendAsync("RecibirNotificacion", $"El usuario {perfilUsuarioId} canceló la partida");
 
-            return Ok("Partida cancelada correctamente.");
+            return Ok(new MensajeRespuestaDTO
+            {
+                Mensaje = "Partida cancelada correctamente."
+            });
         }
 
         [HttpGet("usuarioPartida/{usuarioPartidaId:int}")]

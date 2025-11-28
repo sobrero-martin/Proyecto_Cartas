@@ -30,6 +30,13 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok("Mazo inicial asignado");
         }
 
+        [HttpGet("{perfilUsuarioId:int}")]
+        public async Task<ActionResult<List<InventarioDTO>>> GetByPerfilUsuarioId(int perfilUsuarioId)
+        {
+            var inventario = await repositorio.GetByPerfilUsuarioId(perfilUsuarioId);
+            return Ok(inventario);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
