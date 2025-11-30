@@ -22,7 +22,24 @@
 {
     <div style="position: fixed; color:#26282B ;top: 20px; right: 20px; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
         @notificacion
-        <button class="btn btn-primary" @onclick="ConfirmarPartida">Confirmar</button><button class="btn btn-secondary">Rechazar</button>
+        <button class="btn btn-primary" @onclick="ConfirmarPartida">Confirmar</button><button class="btn btn-secondary" @onclick="RechazarPartida">Rechazar</button>
+    </div>
+}
+
+@if (mostrarPopupRechazo)
+{
+    <div style="position: fixed; color:#26282B ;top: 20px; right: 20px; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
+        @notificacionRechazo
+        <button class="btn btn-danger" @onclick="CerrarPopupRechazo">X</button>
+    </div>
+}
+
+@if (mostrarPopupElegirMazo)
+{
+    <div style="position: fixed; color:#26282B ;top: 50%; right: 50%; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
+        @notificacionMazo
+        <button class="btn btn-primary" @onclick="() => ElegirMazo(1)">Mazo 1</button>
+        <button class="btn btn-primary" @onclick="() => ElegirMazo(2)">Mazo 2</button>
     </div>
 }
 
@@ -32,6 +49,8 @@
     private string nombreRival = string.Empty;
     private bool buscandoPartida = false;
     private bool mostrarPopupConfirmar = false;
+    private bool mostrarPopupRechazo = false;
+    private bool mostrarPopupElegirMazo = false;
     private string mensajeEstado = "Buscar Partida";
     private int partidaIdEncontrada;
     private int perfilRivalId;
@@ -39,7 +58,10 @@
     private HubConnection? hubConnection;
     BuscarPartidaSolicitudDTO buscarPartida = new BuscarPartidaSolicitudDTO { PerfilUsuarioId = 0 };
     private string notificacion = string.Empty;
+    private string notificacionRechazo = string.Empty;
+    private string notificacionMazo = "Selecciona un mazo";
     private int partidaIdEnCurso = 0;
+    List<InventarioDTO> inventario = new List<InventarioDTO>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,6 +83,16 @@
             partidaIdEnCurso = httpRespPartida.Respuesta;
         }
 
+        var httpRespInventario = await http.Get<List<InventarioDTO>>($"api/Inventario/{perfilUsuarioId}");
+        if (!httpRespInventario.Error && httpRespInventario.Respuesta != null)
+        {
+            inventario = httpRespInventario.Respuesta;
+            if (inventario == null || inventario.Count == 0)
+            {
+                mostrarPopupElegirMazo = true;
+            }
+        }
+
         hubConnection = new HubConnectionBuilder()
            .WithUrl("https://localhost:7192/juegoHub")
            .WithAutomaticReconnect()
@@ -72,6 +104,18 @@
             {
                 mostrarPopupConfirmar = true;
                 notificacion = mensaje;
+                StateHasChanged();
+            });
+
+        });
+
+        hubConnection.On<string>("RecibirNotificacionRechazo", (mensaje) =>
+        {
+            InvokeAsync(() =>
+            {
+                mostrarPopupRechazo = true;
+                notificacionRechazo = mensaje;
+                mostrarPopupConfirmar = false;
                 StateHasChanged();
             });
 
@@ -99,6 +143,7 @@
             if(hubConnection != null)
             {
                 await hubConnection.InvokeAsync("UnirsePartida", httpResp.Respuesta.PartidaId);
+                partidaIdEncontrada = httpResp.Respuesta.PartidaId;
             }
 
 
@@ -110,7 +155,7 @@
 
                 }*/
 
-            mensajeEstado = httpResp.Respuesta.Mensaje;
+                                                                                                                        mensajeEstado = httpResp.Respuesta.Mensaje;
 
             while(buscandoPartida == true)
             {
@@ -162,5 +207,38 @@
         }
     }
 
+    private async Task RechazarPartida()
+    {
+
+        var httpResp = await http.Post<int, MensajeRespuestaDTO>("api/Juego/cancelarPartida/", perfilUsuarioId);
+
+        if(!httpResp.Error)
+        {
+            await hubConnection!.InvokeAsync("NotificarRechazoPartida", partidaIdEncontrada, $"El usuario {nombreUsuario} ha rechazado la partida");
+        }
+        else
+        {
+            notificacion = "Error al rechazar la partida.";
+        }
+    }
+
+    private void CerrarPopupRechazo()
+    {
+        mostrarPopupRechazo = false;
+    }
+
+    private async Task ElegirMazo(int mazoNum)
+    {
+        var url = $"api/Inventario/MazoInicial/{perfilUsuarioId}/{mazoNum}";
+        var httpResp = await http.Post<object, MensajeRespuestaDTO>(url, new { });
+        if (!httpResp.Error)
+        {
+            mostrarPopupElegirMazo = false;
+        }
+        else
+        {
+            notificacionMazo = "Error al seleccionar el mazo.";
+        }
+    }
 
 }

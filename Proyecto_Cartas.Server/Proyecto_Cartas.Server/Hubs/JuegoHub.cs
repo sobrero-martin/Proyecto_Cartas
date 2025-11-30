@@ -11,8 +11,14 @@ namespace Proyecto_Cartas.Server.Hubs
 
         public async Task NotificarPartidaEncontrada(int partidaId, string mensaje)
         {
-            await Clients.Group($"Partida-{partidaId}").SendAsync("RecibirNotificacionPartida", mensaje);
+            await Clients.Group($"partida-{partidaId}").SendAsync("RecibirNotificacionPartida", mensaje);
         }
+
+        public async Task NotificarRechazoPartida(int partidaId, string mensaje)
+        {
+            await Clients.Group($"partida-{partidaId}").SendAsync("RecibirNotificacionRechazo", mensaje);
+        }
+
 
         public async Task ActualizarPartida(int partidaId)
         {

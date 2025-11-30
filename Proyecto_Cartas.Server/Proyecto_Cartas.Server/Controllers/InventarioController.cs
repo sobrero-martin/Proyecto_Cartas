@@ -20,14 +20,27 @@ namespace Proyecto_Cartas.Server.Controllers
 
 
         [HttpPost("MazoInicial/{perfilUsuarioId:int}/{opcion:int}")]
-        public async Task<IActionResult> MazoInicial(int perfilUsuarioId, int opcion)
+        public async Task<ActionResult<MensajeRespuestaDTO>> MazoInicial(int perfilUsuarioId, int opcion)
         {
             bool exito = await repositorio.MazoInicial(perfilUsuarioId, opcion);
             if (!exito)
             {
-                return BadRequest("El ");
+                return BadRequest(new MensajeRespuestaDTO
+                {
+                    Mensaje = "Error al crear el mazo inicial."
+                });
             }
-            return Ok("Mazo inicial asignado");
+            return Ok(new MensajeRespuestaDTO
+            {
+                Mensaje = "Mazo inicial creado exitosamente."
+            });
+        }
+
+        [HttpGet("{perfilUsuarioId:int}")]
+        public async Task<ActionResult<List<InventarioDTO>>> GetByPerfilUsuarioId(int perfilUsuarioId)
+        {
+            var inventario = await repositorio.GetByPerfilUsuarioId(perfilUsuarioId);
+            return Ok(inventario);
         }
 
         [HttpGet]

@@ -153,18 +153,24 @@ namespace Proyecto_Cartas.Server.Controllers
         }
 
         [HttpPost("cancelarPartida")]
-        public async Task<ActionResult> CancelarPartida(int perfilUsuarioId)
+        public async Task<ActionResult<MensajeRespuestaDTO>> CancelarPartida([FromBody]int perfilUsuarioId)
         {
             var exito = await usuarioPartidaRepositorio.CancelarPartida(perfilUsuarioId);
 
             if (!exito)
             {
-                return BadRequest("No estás jugando o buscando una partida.");
+                return BadRequest(new MensajeRespuestaDTO
+                {
+                   Mensaje = "Error al cancelar la partida."
+                });
             }
 
             await hubContext.Clients.All.SendAsync("RecibirNotificacion", $"El usuario {perfilUsuarioId} canceló la partida");
 
-            return Ok("Partida cancelada correctamente.");
+            return Ok(new MensajeRespuestaDTO
+            {
+                Mensaje = "Partida cancelada correctamente."
+            });
         }
 
         [HttpGet("usuarioPartida/{usuarioPartidaId:int}")]
@@ -187,6 +193,30 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(partidaId);
         }
 
+        [HttpPost("CrearEstadosCartas/{usuarioPartidaId:int}/{tipoMazo}")]
+        public async Task<ActionResult<MensajeRespuestaDTO>> CrearEstadosCartas(int usuarioPartidaId, string tipoMazo)
+        {
+            var exito = await estadoCartaRepositorio.CrearEstadosCartas(usuarioPartidaId, tipoMazo);
+            if (exito == 0)
+            {
+                return BadRequest(new MensajeRespuestaDTO
+                {
+                    Mensaje = "Error al crear los estados de las cartas."
+                });
+            }
+            if (exito == 2)
+            {
+                return Ok(new MensajeRespuestaDTO
+                {
+                    Mensaje = "Los estados de las cartas ya existen."
+                });
+            }
+
+            return Ok(new MensajeRespuestaDTO
+            {
+                Mensaje = "Estados de cartas creados correctamente."
+            });
+        }
 
         // ENDPOINTS DE TESTEO
 

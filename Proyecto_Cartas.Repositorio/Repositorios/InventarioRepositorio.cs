@@ -55,5 +55,18 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             await context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<List<InventarioDTO>> GetByPerfilUsuarioId(int perfilUsuarioId)
+        {
+            return await context.Inventarios
+                .Where(i => i.PerfilUsuarioID == perfilUsuarioId)
+                .Select(i => new InventarioDTO
+                {
+                    PerfilUsuarioId = i.PerfilUsuarioID,
+                    CartaId = i.CartaID,
+                    Tipo = i.Tipo
+                })
+                .ToListAsync();
+        }
     }
 }
