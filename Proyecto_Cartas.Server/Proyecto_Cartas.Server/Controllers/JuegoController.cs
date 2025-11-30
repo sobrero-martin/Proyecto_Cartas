@@ -403,6 +403,18 @@ namespace Proyecto_Cartas.Server.Controllers
 
         }
 
+        [HttpGet("turno/ultimo/{usuarioPartidaId:int}")] // api/turno/ultimo/{usuarioPartidaId})
+
+        public async Task<ActionResult<TurnoDTO>> GetUltimoTurnoDeUsuario(int usuarioPartidaId)
+        {
+            var turno = await turnoRepositorio.UltimoTurno(usuarioPartidaId);
+            if (turno == null)
+            {
+                return NotFound($"No se encontró el último turno para el usuario con ID {usuarioPartidaId}.");
+            }
+            return Ok(turno);
+        }
+
         [HttpGet("turno/{id:int}")] // api/turno/{id}
         public async Task<ActionResult<TurnoDTO>> GetTurnoPorId(int id)
         {

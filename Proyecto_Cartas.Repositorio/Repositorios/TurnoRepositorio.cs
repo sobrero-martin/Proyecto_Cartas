@@ -1,4 +1,5 @@
-﻿using Proyecto_Cartas.BD.Datos;
+﻿using Microsoft.EntityFrameworkCore;
+using Proyecto_Cartas.BD.Datos;
 using Proyecto_Cartas.BD.Datos.Entidades;
 using Proyecto_Cartas.Shared.DTO;
 using System;
@@ -40,5 +41,25 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 Fase = turno.Fase
             };
         }
+
+        public async Task<TurnoDTO> UltimoTurno(int usuarioPartidaId)
+        {
+           
+
+            var turno = await context.Turnos
+                .Where(t => t.UsuarioPartidaID == usuarioPartidaId)
+                .OrderByDescending(t => t.Numero)
+                .Select(t => new TurnoDTO
+                {
+                    Id = t.Id,
+                    UsuarioPartidaID = t.UsuarioPartidaID,
+                    Numero = t.Numero,
+                    Fase = t.Fase
+                })
+                .FirstOrDefaultAsync();
+
+            return turno ?? throw new Exception("No se encontró turno");
+        }
+
     }
 }
