@@ -192,6 +192,15 @@ else
                 Console.WriteLine("Error al obtener el perfil del usuario.");
             }
 
+            var tipoMazo = Uri.EscapeDataString("Mazo Inicial");
+
+            var url = $"api/Juego/CrearEstadosCartas/{UsuarioPartidaId}/{tipoMazo}";
+            var httpResp = await http.Post<object, MensajeRespuestaDTO>(url, new { });
+            if (httpResp.Error)
+            {
+                Console.WriteLine("Error al crear el mazo inicial.");
+            }
+
             await CartasDelJugador();
 
             await CartasDelRival();

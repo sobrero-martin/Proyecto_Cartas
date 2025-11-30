@@ -20,6 +20,49 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             this.eventoRepositorio = eventoRepositorio;
         }
 
+        public async Task<int> CrearEstadosCartas(int usuarioPartidaId, string tipoMazo)
+        {
+            var usuarioPartida = await context.UsuariosPartida
+                .Include(up => up.PerfilUsuario)
+                .FirstOrDefaultAsync(up => up.Id == usuarioPartidaId);
+
+            if (usuarioPartida == null)
+                return 0;
+
+            bool yaTiene = await context.EstadosCarta
+                .AnyAsync(ec => ec.UsuarioPartidaID == usuarioPartidaId);
+
+            if (yaTiene)
+                return 2;
+
+            var cartasMazo = await context.Inventarios
+                .Where(c => c.Tipo == tipoMazo && c.PerfilUsuarioID == usuarioPartida.PerfilUsuarioID)
+                .Include(c => c.Carta)
+                .ToListAsync();
+
+            if (cartasMazo.Count == 0)
+                return 0;
+
+            foreach (var carta in cartasMazo)
+            {
+                var estadoCarta = new EstadoCarta
+                {
+                    UsuarioPartidaID = usuarioPartidaId,
+                    InventarioID = carta.Id,
+                    Nombre = carta.Carta!.NombreCarta,
+                    Ataque = carta.Carta.Ataque,
+                    Vida = carta.Carta.Vida,
+                    Velocidad = carta.Carta.Velocidad,
+                    Posicion = "Mazo"
+                };
+                context.EstadosCarta.Add(estadoCarta);
+            }
+
+            await context.SaveChangesAsync();
+
+            return 1;
+        }
+
         public async Task<List<EstadoCartaDTO>> ObtenerCartasEnCampo(int idPartida)
         {
             var posicionesCampo = new[] { "Campo1", "Campo2", "Campo3" };

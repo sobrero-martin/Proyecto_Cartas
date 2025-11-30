@@ -193,6 +193,30 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(partidaId);
         }
 
+        [HttpPost("CrearEstadosCartas/{usuarioPartidaId:int}/{tipoMazo}")]
+        public async Task<ActionResult<MensajeRespuestaDTO>> CrearEstadosCartas(int usuarioPartidaId, string tipoMazo)
+        {
+            var exito = await estadoCartaRepositorio.CrearEstadosCartas(usuarioPartidaId, tipoMazo);
+            if (exito == 0)
+            {
+                return BadRequest(new MensajeRespuestaDTO
+                {
+                    Mensaje = "Error al crear los estados de las cartas."
+                });
+            }
+            if (exito == 2)
+            {
+                return Ok(new MensajeRespuestaDTO
+                {
+                    Mensaje = "Los estados de las cartas ya existen."
+                });
+            }
+
+            return Ok(new MensajeRespuestaDTO
+            {
+                Mensaje = "Estados de cartas creados correctamente."
+            });
+        }
 
         // ENDPOINTS DE TESTEO
 
