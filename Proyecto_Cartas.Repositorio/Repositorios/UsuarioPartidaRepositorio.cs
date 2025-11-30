@@ -194,9 +194,19 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                                   .Where(up => up.Id == usuarioPartidaId && up.Partida != null && up.Partida.Estado == "EnProgreso")
                                   .FirstOrDefaultAsync();
 
+            if (usuarioPartida == null)
+            {
+                return 0;
+            }
+
             var usuarioPartidaRival = await context.UsuariosPartida
                                         .Where(up => up.PartidaID == usuarioPartida!.PartidaID && up.Id != usuarioPartidaId)
                                         .FirstOrDefaultAsync();
+
+            if (usuarioPartidaRival == null)
+            {
+                return 0;
+            }
 
             return usuarioPartidaRival!.Id;
         }

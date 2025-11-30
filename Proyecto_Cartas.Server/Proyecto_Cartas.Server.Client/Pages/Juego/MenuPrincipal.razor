@@ -30,7 +30,16 @@
 {
     <div style="position: fixed; color:#26282B ;top: 20px; right: 20px; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
         @notificacionRechazo
-        <button class="btn btn-danger" @onclick="CerrarPopup">X</button>
+        <button class="btn btn-danger" @onclick="CerrarPopupRechazo">X</button>
+    </div>
+}
+
+@if (mostrarPopupElegirMazo)
+{
+    <div style="position: fixed; color:#26282B ;top: 50%; right: 50%; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
+        @notificacionMazo
+        <button class="btn btn-primary" @onclick="() => ElegirMazo(1)">Mazo 1</button>
+        <button class="btn btn-primary" @onclick="() => ElegirMazo(2)">Mazo 2</button>
     </div>
 }
 
@@ -41,6 +50,7 @@
     private bool buscandoPartida = false;
     private bool mostrarPopupConfirmar = false;
     private bool mostrarPopupRechazo = false;
+    private bool mostrarPopupElegirMazo = false;
     private string mensajeEstado = "Buscar Partida";
     private int partidaIdEncontrada;
     private int perfilRivalId;
@@ -49,6 +59,7 @@
     BuscarPartidaSolicitudDTO buscarPartida = new BuscarPartidaSolicitudDTO { PerfilUsuarioId = 0 };
     private string notificacion = string.Empty;
     private string notificacionRechazo = string.Empty;
+    private string notificacionMazo = "Selecciona un mazo";
     private int partidaIdEnCurso = 0;
     List<InventarioDTO> inventario = new List<InventarioDTO>();
 
@@ -76,6 +87,10 @@
         if (!httpRespInventario.Error && httpRespInventario.Respuesta != null)
         {
             inventario = httpRespInventario.Respuesta;
+            if (inventario == null || inventario.Count == 0)
+            {
+                mostrarPopupElegirMazo = true;
+            }
         }
 
         hubConnection = new HubConnectionBuilder()
@@ -140,7 +155,7 @@
 
                 }*/
 
-                                                            mensajeEstado = httpResp.Respuesta.Mensaje;
+                                                                                                                        mensajeEstado = httpResp.Respuesta.Mensaje;
 
             while(buscandoPartida == true)
             {
@@ -207,9 +222,23 @@
         }
     }
 
-    private async Task CerrarPopup()
+    private void CerrarPopupRechazo()
     {
-       mostrarPopupRechazo = false;
+        mostrarPopupRechazo = false;
+    }
+
+    private async Task ElegirMazo(int mazoNum)
+    {
+        var url = $"api/Inventario/MazoInicial/{perfilUsuarioId}/{mazoNum}";
+        var httpResp = await http.Post<object, MensajeRespuestaDTO>(url, new { });
+        if (!httpResp.Error)
+        {
+            mostrarPopupElegirMazo = false;
+        }
+        else
+        {
+            notificacionMazo = "Error al seleccionar el mazo.";
+        }
     }
 
 }
