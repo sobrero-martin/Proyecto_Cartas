@@ -413,7 +413,7 @@ namespace Proyecto_Cartas.Server.Controllers
 
         #endregion
 
-        [HttpPost("turno")] // api/turno
+        [HttpPost("turno")]
 
         public async Task<ActionResult<TurnoDTO>> NuevoTurno(TurnoCrearDTO dto)
         {

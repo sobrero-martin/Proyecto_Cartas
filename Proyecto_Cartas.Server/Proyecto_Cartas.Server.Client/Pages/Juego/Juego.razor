@@ -119,7 +119,9 @@ else
     private EstadoCartaDTO? cartaSeleccionada = null;
     private HubConnection? hubConnection;
     private int Cementerio = 0;
-    
+    private TurnoDTO? turnoActual = null;   
+    private TurnoDTO? turnoNuevo = null;
+    private int ultimoNumeroTurno = 0;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -213,6 +215,8 @@ else
             CartasEnCampo();
 
             CartasEnCampoRival();
+
+            await CrearTurno(1, "Robo Inicial");
         }
         catch (Exception e)
         {
@@ -391,5 +395,27 @@ else
         CartasEnCampo();
         CartasEnCampoRival();
         StateHasChanged();
+    }
+
+    private async Task CrearTurno(int numero, string fase)
+    {
+        var crearTurnoDTO = new TurnoCrearDTO
+        {
+            UsuarioPartidaID = UsuarioPartidaId,
+            Numero = numero,
+            Fase = fase
+        };
+
+        var response = await httpClient.PostAsJsonAsync("api/Juego/turno", crearTurnoDTO);
+
+        if (response.IsSuccessStatusCode)
+        {
+            turnoNuevo = await response.Content.ReadFromJsonAsync<TurnoDTO>();
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine($"Error al crear turno: {response.StatusCode}");
+        }
     }
 }
