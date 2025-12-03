@@ -1,22 +1,28 @@
-﻿@page "/login"
+﻿@page "/"
+@using Proyecto_Cartas.Server.Client.Layout
+@layout LoginLayout
 @inject IHttpServicio http
 @inject SesionUsuario Sesion
 @inject NavigationManager navHttp
 @inject IJSRuntime js
 
 <PageTitle>Login</PageTitle>
-
-<h1>Login</h1>
-<br />
+<div class="title">
+<h1>Proyecto Cartas</h1>
+<img src="img/logo.png" class="logo" />
+</div>
 <form>
     <label for="email">Email:</label><br />
-    <input class="loginInput" type="email" @bind="Email" placeholder="Enter your email" /><br />
-    <br />
-    <label for="password">Password:</label><br />
-    <input class="loginInput" type="password" @bind="Password" placeholder="Enter your password" /><br />
-    <br />
-    <button class="btn loginButton" type="button" @onclick="OnLogin">Login</button> <button class="btn loginButton" type="button" @onclick="OnRegister">Register</button>
-    <br />
+    <input class="loginInput" type="email" @bind="Email" placeholder="Ingrese su email" /><br />
+
+    <label for="password">Contraseña:</label><br />
+    <input class="loginInput" type="password" @bind="Password" placeholder="Ingrese su contraseña" /><br />
+
+    <div class="login-buttons">
+    <button class="btn loginButton" type="button" @onclick="OnLogin">Iniciar sesión</button> 
+    <button class="btn loginButton" type="button" @onclick="OnRegister">Registrarse</button>
+    </div>
+
     <p style="margin: 20px">@LoginStatus</p>
 </form>
 @if (mostrarPopup)

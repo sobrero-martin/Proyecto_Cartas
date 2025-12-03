@@ -65,7 +65,11 @@
 
     protected override async Task OnInitializedAsync()
     {
-
+        if(Sesion.UsuarioId == 0)
+        {
+            navHttp.NavigateTo("/");
+            return;
+        }
         var httpResp = await http.Get<PerfilUsuarioDTO>($"https://localhost:7192/api/PerfilUsuario/{Sesion.UsuarioId}");
         if (!httpResp.Error && httpResp.Respuesta != null)
         {
