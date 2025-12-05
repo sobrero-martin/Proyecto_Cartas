@@ -66,8 +66,9 @@ h1:focus {
 }
 
 .carta {
-    width: 160px;
-    height: 255px;
+    width: min(12vw, 160px);
+    min-width: 160px;
+    height: auto;
     border-radius: 10px;
     border: 1px solid #353941;
     background:#26282B;
@@ -147,8 +148,11 @@ h1:focus {
 }
 
 .campo {
-    width: 160px;
-    height: 255px;
+    width: min(12vw, 160px);
+    min-width: 160px;
+    aspect-ratio: 160/250.63;
+    height: auto;
+    
     border-radius: 10px;
     border: 1px solid #353941;
     background: linear-gradient(180deg, #353941, #26282B);

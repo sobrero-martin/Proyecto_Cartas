@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using Proyecto_Cartas.Server.Client.Layout
+@using System.Text.RegularExpressions
 @layout LoginLayout
 @inject IHttpServicio http
 @inject SesionUsuario Sesion
@@ -11,7 +12,7 @@
 <h1>Proyecto Cartas</h1>
 <img src="img/logo.png" class="logo" />
 </div>
-<form>
+<form @onsubmit="OnRegister">
     <label for="email">Email:</label><br />
     <input class="loginInput" type="email" @bind="Email" placeholder="Ingrese su email" /><br />
 
@@ -20,7 +21,7 @@
 
     <div class="login-buttons">
     <button class="btn loginButton" type="button" @onclick="OnLogin">Iniciar sesión</button> 
-    <button class="btn loginButton" type="button" @onclick="OnRegister">Registrarse</button>
+    <button class="btn loginButton" type="submit" >Registrarse</button>
     </div>
 
     <p style="margin: 20px">@LoginStatus</p>
@@ -47,8 +48,14 @@
         mostrarPopup = false;
     }
 
+    private bool EmailValido(string email)
+    {
+        return !string.IsNullOrEmpty(email) && Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+    }
+
     private async Task OnLogin()
     {
+
         var usuario = new UsuarioAuthDTO()
         {
             Email = Email,
@@ -91,6 +98,12 @@
     
     private async Task OnRegister()
     {
+        
+        if(!EmailValido(Email))
+        {
+            return;
+        }
+    
         var nuevoUsuario = new UsuarioAuthDTO()
         {
             Email = Email,
