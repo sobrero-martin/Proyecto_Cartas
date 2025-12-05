@@ -63,9 +63,25 @@
     private int partidaIdEnCurso = 0;
     List<InventarioDTO> inventario = new List<InventarioDTO>();
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (Sesion.UsuarioId == 0)
+            {
+                navHttp.NavigateTo("/");
+            }
+        }
+    }
+
     protected override async Task OnInitializedAsync()
     {
-
+        /*
+        if(Sesion.UsuarioId == 0)
+        {
+            navHttp.NavigateTo("/");
+            return;
+        }*/
         var httpResp = await http.Get<PerfilUsuarioDTO>($"https://localhost:7192/api/PerfilUsuario/{Sesion.UsuarioId}");
         if (!httpResp.Error && httpResp.Respuesta != null)
         {
@@ -195,7 +211,6 @@
                 await Task.Delay(1000);
                 respPartida = await http.Get<int>($"https://localhost:7192/api/juego/obtenerPartidaPorJugador/{perfilUsuarioId}");
             }
-
 
             var respPartidaComenzada = await http.Get<int>($"https://localhost:7192/api/juego/revisarPartida/{respPartida.Respuesta}");
             navHttp.NavigateTo($"/juego/{respPartida.Respuesta}");

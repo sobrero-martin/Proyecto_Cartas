@@ -338,7 +338,7 @@ namespace Proyecto_Cartas.Server.Controllers
             }
             if (estado.Count == 0)
             {
-                return Ok("No existen datos en este momento.");
+                return Ok(new List<EstadoCartaDTO>());
             }
             return Ok(estado);
         }

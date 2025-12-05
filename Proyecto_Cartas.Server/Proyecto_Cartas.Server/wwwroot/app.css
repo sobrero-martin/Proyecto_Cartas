@@ -1,5 +1,5 @@
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 a, .btn-link {
@@ -66,8 +66,9 @@ h1:focus {
 }
 
 .carta {
-    width: 160px;
-    height: 255px;
+    width: min(12vw, 160px);
+    min-width: 160px;
+    height: auto;
     border-radius: 10px;
     border: 1px solid #353941;
     background:#26282B;
@@ -147,8 +148,11 @@ h1:focus {
 }
 
 .campo {
-    width: 160px;
-    height: 255px;
+    width: min(12vw, 160px);
+    min-width: 160px;
+    aspect-ratio: 160/250.63;
+    height: auto;
+    
     border-radius: 10px;
     border: 1px solid #353941;
     background: linear-gradient(180deg, #353941, #26282B);
@@ -246,3 +250,70 @@ body {
     align-items: center;
 }
 
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-image: repeating-linear-gradient( 45deg, rgba(255,255,255,0.015) 0px, transparent 6px, transparent 12px );
+}
+
+
+.login-container::before,
+.login-container::after {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 300px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transform: rotate(-12deg);
+    filter: blur(1px);
+}
+
+.login-container::before {
+    top: 10%;
+    left: 10%;
+}
+
+.login-container::after {
+    transform: rotate(8deg);
+    bottom: 10%;
+    right:10%;
+    width: 260px;
+    height: 340px;
+}
+
+
+form {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    background-color: #202124;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+
+
+.login-buttons {
+    margin-top: 15px;
+    margin-bottom: -15px;
+    display: flex;
+    gap: 10px;
+}
+
+.logo {
+    width: 80px;
+    height: auto;
+}
+
+.title {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}

@@ -3,8 +3,9 @@
 @inject SesionUsuario Sesion
 @inject NavigationManager navHttp
 
-<h3>CrearPerfil</h3>
+<h3 class="perfilTitulo">CrearPerfil</h3>
 
+<div class="crearPerfil">
 <label>Nombre de perfil:</label>
 <input @bind="nombre" class="form-control"/>
 
@@ -14,6 +15,7 @@
 <button class="btn btn-success" @onclick="crearPerfil">Crear</button>
 
 <p>@estado</p>
+</div>
 
 @code {
     private string nombre = string.Empty;
