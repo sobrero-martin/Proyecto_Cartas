@@ -445,6 +445,14 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(turno);
         }
 
+        [HttpGet("turno/existeRoboInicial/{usuarioPartidaId:int}")] // api/turno/existeRoboInicial/{usuarioPartidaId}|)]
+
+        public async Task<ActionResult<bool>> GetExisteRoboInicial(int usuarioPartidaId)
+        {
+            var existe = await turnoRepositorio.ExisteRoboInicial(usuarioPartidaId);
+            return Ok(existe);
+        }
+
         [HttpGet("turno/{id:int}")] // api/turno/{id}
         public async Task<ActionResult<TurnoDTO>> GetTurnoPorId(int id)
         {

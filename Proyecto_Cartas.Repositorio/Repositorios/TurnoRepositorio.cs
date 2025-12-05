@@ -4,6 +4,7 @@ using Proyecto_Cartas.BD.Datos.Entidades;
 using Proyecto_Cartas.Shared.DTO;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,7 +49,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
 
             var turno = await context.Turnos
                 .Where(t => t.UsuarioPartidaID == usuarioPartidaId)
-                .OrderByDescending(t => t.Numero)
+                .OrderByDescending(t => t.Id)
                 .Select(t => new TurnoDTO
                 {
                     Id = t.Id,
@@ -61,5 +62,12 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return turno ?? throw new Exception("No se encontró turno");
         }
 
+        public async Task<bool> ExisteRoboInicial(int usuarioPartidaId)
+        {
+            return await context.Turnos
+                .AnyAsync(t => t.UsuarioPartidaID == usuarioPartidaId && t.Fase=="Robo Inicial")
+                ;
+
+        }
     }
 }
