@@ -17,6 +17,17 @@ namespace Proyecto_Cartas.Server.Controllers
             this.repositorio = repositorio;
         }
 
+        [HttpGet("ObtenerPerfilUsuarioId/{usuarioId:int}")]
+        public async Task<ActionResult<PerfilUsuarioDTO>> GetPerfilUsuarioByUsuarioId(int usuarioId)
+        {
+            var perfil = await repositorio.GetPerfilByUserId(usuarioId);
+            if (perfil == null)
+            {
+                return NotFound($"No profile found with user ID {usuarioId}.");
+            }
+            return Ok(perfil);
+        }
+
         [HttpGet("{nombre}")]
         public async Task<ActionResult<PerfilUsuarioDTO>> GetByName(string nombre)
         {

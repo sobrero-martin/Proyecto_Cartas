@@ -58,7 +58,15 @@ else
     </div>
 
     <div>
-            <h3>Turno Actual: @turnoActual.Numero     Fase de @turnoActual.Fase</h3>
+            @if (turnoActual != null)
+            {
+                <h3>Turno Actual: @turnoActual.Numero     Fase de @turnoActual.Fase</h3>
+            }
+            else
+            {
+                <h3>Cargando turno...</h3>
+            }
+
     </div>
 
     <h3>Tablero Jugador:</h3>
@@ -105,7 +113,9 @@ else
 
             <button class="btn btn-danger" @onclick="CartasEnCementerio">Terminar Turno</button>
     </div>
-
+    <h1>@PerfilUsuarioId</h1>
+    <h1>@UsuarioPartidaIdRival</h1>
+    <h1>@UsuarioPartidaId</h1>
 
     
 }
@@ -116,6 +126,7 @@ else
     [Parameter] public int PartidaId { get; set; }
 
     private List<EstadoCartaDTO> cartasJugador = new List<EstadoCartaDTO>();
+    private int PerfilUsuarioId;
     private int UsuarioPartidaId;
     private int UsuarioPartidaIdRival;
     private int Mazo = 0;
@@ -161,6 +172,13 @@ else
                 }
 
             }
+
+            var httpRespIdRival = await http.Get<int>($"api/Juego/usuarioPartida/{UsuarioPartidaId}");
+            if (!httpRespIdRival.Error && httpRespIdRival != null)
+            {
+                UsuarioPartidaIdRival = httpRespIdRival.Respuesta;
+            }
+
             StateHasChanged();
         }
     }
@@ -181,7 +199,7 @@ else
 
             cartaSeleccionada.Posicion = campoDestino;
 
-            var resp = await httpClient.PutAsync($"api/Juego/estadoCarta/colocarEnCampo/{UsuarioPartidaId}/{cartaSeleccionada.Id}/{campoDestino}/{1}", null);
+            var resp = await httpClient.PutAsync($"api/Juego/estadoCarta/colocarEnCampo/{UsuarioPartidaId}/{cartaSeleccionada.Id}/{campoDestino}/{turnoActual.Id}", null);
 
             cartaSeleccionada = null;
             if (hubConnection != null)
@@ -191,15 +209,25 @@ else
 
             StateHasChanged();
         }
-    
+
     }
 
     private async Task CargarPartida()
     {
         try
         {
-
-            var httpRespUsuarioPartida = await http.Get<int>($"api/Juego/buscarUsuarioPartida/{Sesion.UsuarioId}");
+            
+            var httpRespPerfil = await http.Get<PerfilUsuarioDTO>($"api/PerfilUsuario/ObtenerPerfilUsuarioId/{Sesion.UsuarioId}");
+            if (!httpRespPerfil.Error && httpRespPerfil.Respuesta != null)
+            {
+                PerfilUsuarioId = httpRespPerfil.Respuesta.Id;
+            }
+            else
+            {
+                Console.WriteLine("Error al obtener el perfil del usuario.");
+            }
+            
+            var httpRespUsuarioPartida = await http.Get<int>($"api/Juego/buscarUsuarioPartida/{PerfilUsuarioId}");
             if (!httpRespUsuarioPartida.Error)
             {
                 UsuarioPartidaId = httpRespUsuarioPartida.Respuesta;
@@ -218,6 +246,10 @@ else
                 Console.WriteLine("Error al crear el mazo inicial.");
             }
 
+            await ExisteRoboInicial();
+
+            await ObtenerTurnoActual();
+
             await CartasDelJugador();
 
             await CartasDelRival();
@@ -226,13 +258,11 @@ else
 
             await CartasEnMazo();
 
+            await CartasEnCementerio();
+
             CartasEnCampo();
 
             CartasEnCampoRival();
-
-            await ExisteRoboInicial();
-
-            await ObtenerTurnoActual();
         }
         catch (Exception e)
         {
@@ -296,7 +326,7 @@ else
         { 
             try
             {
-                var httpResp = await httpClient.PutAsync($"api/Juego/estadoCarta/robarCarta/{UsuarioPartidaId}/1", null);
+                var httpResp = await httpClient.PutAsync($"api/Juego/estadoCarta/robarCarta/{UsuarioPartidaId}/{turnoActual.Id}", null);
                 if (httpResp.IsSuccessStatusCode)
                 {
 
@@ -420,6 +450,7 @@ else
         await CartasDelRival();
         await CartasEnMazo();
         await CartasEnMano();
+        await CartasEnCementerio();
         CartasEnCampo();
         CartasEnCampoRival();
         await ObtenerTurnoActual();

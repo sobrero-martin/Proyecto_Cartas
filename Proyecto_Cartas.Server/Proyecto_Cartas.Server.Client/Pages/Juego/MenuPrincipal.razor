@@ -81,8 +81,8 @@
         {
             navHttp.NavigateTo("/");
             return;
-        }*/
-        var httpResp = await http.Get<PerfilUsuarioDTO>($"https://localhost:7192/api/PerfilUsuario/{Sesion.UsuarioId}");
+            }*/
+                var httpResp = await http.Get<PerfilUsuarioDTO>($"https://localhost:7192/api/PerfilUsuario/{Sesion.UsuarioId}");
         if (!httpResp.Error && httpResp.Respuesta != null)
         {
             nombreUsuario = httpResp.Respuesta.Nombre;
@@ -171,10 +171,11 @@
 
                 }*/
 
-                                                                                                                        mensajeEstado = httpResp.Respuesta.Mensaje;
+                                                                                                                                    mensajeEstado = httpResp.Respuesta.Mensaje;
 
             while(buscandoPartida == true)
             {
+                await Task.Delay(1000);
                 var httpEstadoPartida = await http.Get<RevisarEstadoDTO>($"https://localhost:7192/api/juego/estado/{buscarPartida.PerfilUsuarioId}");
                 if(!httpEstadoPartida.Error && httpEstadoPartida.Respuesta != null)
                 {

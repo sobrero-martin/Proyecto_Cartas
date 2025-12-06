@@ -43,7 +43,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             };
         }
 
-        public async Task<TurnoDTO> UltimoTurno(int usuarioPartidaId)
+        public async Task<TurnoDTO?> UltimoTurno(int usuarioPartidaId)
         {
            
 
@@ -59,7 +59,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 })
                 .FirstOrDefaultAsync();
 
-            return turno ?? throw new Exception("No se encontró turno");
+            return turno;
         }
 
         public async Task<bool> ExisteRoboInicial(int usuarioPartidaId)
