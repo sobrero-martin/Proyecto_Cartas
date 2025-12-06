@@ -5,18 +5,23 @@
 
 <PageTitle>Menú Principal</PageTitle>
 
+<div class="mainMenu">
 <h1>Menú Principal</h1>
 
 
 <p>Bienvenido, @nombreUsuario</p>
 
-
 <button class="btn btn-success" @onclick="BuscarPartida" disabled="@buscandoPartida">@mensajeEstado</button>
 
 @if(partidaIdEnCurso != 0)
 {
-    <p>Tienes una partida en curso. <a href="@($"/juego/{partidaIdEnCurso}")">Continuar partida #@partidaIdEnCurso</a></p>
+    <div class="partidaCurso">
+    <p >Tienes una partida en curso.</p>
+    <button class="btn btnContinuar" @onclick="@(() => navHttp.NavigateTo($@"/juego/{partidaIdEnCurso}"))">Continuar partida</button>
+    </div>
 }
+
+</div>
 
 @if (mostrarPopupConfirmar)
 {

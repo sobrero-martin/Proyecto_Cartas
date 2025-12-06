@@ -119,8 +119,10 @@ h1:focus {
     padding: 10px;
     cursor: pointer;
     text-align: center;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     margin-bottom: 50px;
+    position: fixed;
+    left: 260px;
+    bottom: 0%;
 }
 
 .cementerio {
@@ -137,8 +139,10 @@ h1:focus {
     padding: 10px;
     cursor: pointer;
     text-align: center;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     margin-bottom: 50px;
+    position: fixed;
+    right: 1%;
+    bottom: 0%;
 }
 
 .tablero{
@@ -173,6 +177,11 @@ h1:focus {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    position: fixed;
+    bottom: 5%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 
@@ -184,6 +193,42 @@ body {
     color: #90B8F8;
 }
 
+.mainMenu {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 5vh;
+    font-size: 16px;
+}
+
+.mainMenu h1 {
+    border: none;
+    height: -1px;
+    background: linear-gradient(90deg, transparent, #353941, transparent);
+    margin: 15px 0;
+}
+
+.partidaCurso {
+    background: #353941;
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid #90B8F855;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    backdrop-filter: blur(4px);
+    text-align: center;
+    max-width: 450px;
+}
+
+.btnContinuar {
+    border: 2px solid #90B8F855;
+}
+
+.btnContinuar:hover {
+    border-color: #353941;
+    background: #90B8F855 !important;
+}
 
 
 .nav-scrollable {
@@ -230,25 +275,6 @@ body {
     margin-bottom: 200px;
 }
 
-.cementerio {
-    position: fixed;
-    right: 5%;
-    bottom: 5%;
-}
-
-.mazo {
-    position: fixed;
-    left: 15%;
-    bottom: 5%;
-}
-
-.mano {
-    position: fixed;
-    bottom: 5%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
 
 .login-container {
     display: flex;

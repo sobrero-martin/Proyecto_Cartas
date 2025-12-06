@@ -107,16 +107,25 @@ else
             <Carta carta="carta" OnCartaClick="SeleccionarCarta"/>
         }
         </div>
+        <div class="botonesMano">
         <button class="btn btn-primary" @onclick="RobarCarta">Robar Carta</button>
 
         <button class="btn btn-secondary" @onclick="Actualizar">Actualizar</button>
 
-            <button class="btn btn-danger" @onclick="CartasEnCementerio">Terminar Turno</button>
+        <button class="btn btn-danger" @onclick="CartasEnCementerio">Terminar Turno</button>
+        </div>
     </div>
     <h1>@PerfilUsuarioId</h1>
     <h1>@UsuarioPartidaIdRival</h1>
     <h1>@UsuarioPartidaId</h1>
 
+    @if (popUpRobar)
+{
+    <div style="position: fixed; color:#26282B ;top: 50%; right: 50%; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
+        Ya has robado una carta este turno.
+        <button class="btn btn-danger" @onclick="() => popUpRobar = false">X</button>
+    </div>
+}
     
 }
 
@@ -142,6 +151,7 @@ else
     private int ultimoNumeroTurno = 1;
     private bool roboCarta= false;
     private bool existeRoboInicial = true;
+    private bool popUpRobar = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -216,7 +226,7 @@ else
     {
         try
         {
-            
+
             var httpRespPerfil = await http.Get<PerfilUsuarioDTO>($"api/PerfilUsuario/ObtenerPerfilUsuarioId/{Sesion.UsuarioId}");
             if (!httpRespPerfil.Error && httpRespPerfil.Respuesta != null)
             {
@@ -226,7 +236,7 @@ else
             {
                 Console.WriteLine("Error al obtener el perfil del usuario.");
             }
-            
+
             var httpRespUsuarioPartida = await http.Get<int>($"api/Juego/buscarUsuarioPartida/{PerfilUsuarioId}");
             if (!httpRespUsuarioPartida.Error)
             {
@@ -348,6 +358,7 @@ else
         } 
         else{
             Console.WriteLine("Ya has robado una carta este turno.");
+            popUpRobar = true;
         }
 
     }
@@ -513,6 +524,7 @@ else
             Console.WriteLine($"Error al verificar el turno de robo inicial: {response.StatusCode}");
         }
     }
+
 
     // private Task<bool> TerminoTurno(int usuarioPartidaId)
     // {
