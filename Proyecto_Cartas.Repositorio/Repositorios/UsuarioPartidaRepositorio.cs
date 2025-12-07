@@ -218,6 +218,33 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return (usuarioPartida!.CartasPerdidas >= 3);    
         }
 
+        public async Task<int> CartasPerdidas(int usuarioPartidaId)
+        {
+            var usuarioPartida = await context.UsuariosPartida.FindAsync(usuarioPartidaId);
+
+            if(usuarioPartida == null)
+            {
+                return 0;
+            }
+
+            return usuarioPartida.CartasPerdidas;
+        }
+
+        public async Task<string> NombreJugador(int usuarioPartidaId)
+        {
+            var usuarioPartida = await context.UsuariosPartida
+                                        .Include(up => up.PerfilUsuario)
+                                        .Where(up => up.Id == usuarioPartidaId)
+                                        .FirstOrDefaultAsync();
+
+            if (usuarioPartida == null || usuarioPartida.PerfilUsuario == null)
+            {
+                return "";
+            }
+
+            return usuarioPartida.PerfilUsuario.Nombre;
+        }
+
     }
 }
 

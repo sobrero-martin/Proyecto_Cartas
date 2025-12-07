@@ -10,10 +10,37 @@
 <div class="partida">
 
     <div class="header">
-    <div>
+        <div class="hp rival">
+            @if(nombreRival != "")
+            {
+                <span>@nombreRival</span>
+            }
+            else
+            {
+                <span>Rival</span>
+            }
+            @if (vidaRival == 3)
+            {
+                <img src="@($"img/ui/3HP.png")" alt="Vida = @vidaRival" />
+            }
+            else if (vidaRival == 2)
+            {
+                <img src="@($"img/ui/2HP.png")" alt="Vida = @vidaRival" />
+            }
+            else if (vidaRival == 1)
+            {
+                <img src="@($"img/ui/1HP.png")" alt="Vida = @vidaRival" />
+            }
+            else
+            {
+                <img src="@($"img/ui/0HP.png")" alt="Vida = @vidaRival" />
+            }
+
+        </div>
+    <div class="turno">
         @if (turnoActual != null)
         {
-            <h3>Turno Actual: @turnoActual.Numero     Fase de @turnoActual.Fase</h3>
+            <h3>Turno @turnoActual.Numero: @turnoActual.Fase</h3>
         }
         else
         {
@@ -21,11 +48,16 @@
         }
 
     </div>
-    <div class="hp">
+    <div class="hp jugador">
+            @if (nombreJugador != "")
+            {
+                <span>@nombreJugador</span>
+            }
             @if(Cementerio == 0)
             {
                 <img src="@($"img/ui/3HP.png")" alt="Vida = @Cementerio"/>
-            } else if(Cementerio == 1){
+            } else if(Cementerio == 1)
+            {
                 <img src="@($"img/ui/2HP.png")" alt="Vida = @Cementerio" />
             } else if(Cementerio == 2)
             {
@@ -46,7 +78,6 @@
 else
 {
 
-    <h3>Tablero del Rival</h3>
     <div class="tablero">
         <div class="campo" @onclick="@(() => ColocarCarta("Campo1"))">
             @foreach (var carta in cartasEnCampoRival.Where(c => c.Posicion == "Campo1"))
@@ -67,8 +98,9 @@ else
             }
         </div>
     </div>
-
-    <h3>Tablero del Jugador</h3>
+    <div class="separadorTablero">
+            <span>VS</span>
+    </div>
     <div class="tablero">
         <div class="campo" @onclick="@(() => ColocarCarta("Campo1"))">
             @foreach (var carta in cartasEnCampo.Where(c => c.Posicion == "Campo1"))
@@ -99,7 +131,6 @@ else
     </div>
     
     <div class="mano">
-        <h3>Cartas en mano:</h3>
         <div class="cartasMano">
         @foreach (var carta in cartasMano)
         {
@@ -163,6 +194,9 @@ else
     private bool terminaronTurno = false;
     private string btnTerminarTurnoText = "Terminar Turno";
     private string notificacionCancelar = string.Empty;
+    private int vidaRival = 3;
+    private string nombreRival = string.Empty;
+    private string nombreJugador = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -173,6 +207,7 @@ else
             {
                 Sesion.UsuarioId = id;
                 await CargarPartida();
+                nombreJugador = await js.InvokeAsync<string>("localStorage.getItem", "NombreUsuario");
 
                 hubConnection = new HubConnectionBuilder()
                  .WithUrl("https://localhost:7192/juegoHub")
@@ -209,6 +244,11 @@ else
             if (!httpRespIdRival.Error && httpRespIdRival != null)
             {
                 UsuarioPartidaIdRival = httpRespIdRival.Respuesta;
+                var httpRespNombreRival = await http.Get<MensajeRespuestaDTO>($"api/UsuarioPartida/nombre/{UsuarioPartidaIdRival}");
+                if(!httpRespNombreRival.Error && httpRespNombreRival.Respuesta != null)
+                {
+                    nombreRival = httpRespNombreRival.Respuesta.Mensaje;
+                }
             }
 
             StateHasChanged();
@@ -586,13 +626,12 @@ else
 
     private async Task CancelarPartida()
     {
-        var nombreUsuario = await js.InvokeAsync<string>("localStorage.getItem", "NombreUsuario");
 
         var httpResp = await http.Post<int, MensajeRespuestaDTO>("api/Juego/cancelarPartida/", PerfilUsuarioId);
 
         if (!httpResp.Error)
         {
-            await hubConnection!.InvokeAsync("NotificarRechazoPartida", PartidaId, $"El usuario {nombreUsuario} se ha rendido");
+            await hubConnection!.InvokeAsync("NotificarRechazoPartida", PartidaId, $"El usuario {nombreJugador} se ha rendido");
         }
         else
         {
@@ -615,9 +654,18 @@ else
 
             if (!httpRespDerrota.Error)
             {
-                var nombreUsuario = await js.InvokeAsync<string>("localStorage.getItem", "NombreUsuario");
-                await hubConnection!.InvokeAsync("NotificarRechazoPartida", PartidaId, $"El usuario {nombreUsuario} ha perdido la partida");
+                await hubConnection!.InvokeAsync("NotificarRechazoPartida", PartidaId, $"El usuario {nombreJugador} ha perdido la partida");
             }
+        }
+    }
+
+    private async Task VidaRival()
+    {
+        var httpResp = await http.Get<int>($"api/Juego/cartasPerdidas/{UsuarioPartidaIdRival}");
+
+        if(!httpResp.Error)
+        {
+            vidaRival = 3 - httpResp.Respuesta;
         }
     }
 

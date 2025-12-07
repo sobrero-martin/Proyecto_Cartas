@@ -19,5 +19,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         Task<int?> BuscarUsuarioPartida(int perfilUsuarioId);
         Task<int> BuscarUsuarioPartidaRival(int usuarioPartidaId);
         Task<bool> RevisarDerrota(int usuarioPartidaId);
+        Task<int> CartasPerdidas(int usuarioPartidaId);
+        Task<string> NombreJugador(int usuarioPartidaId);
     }
 }

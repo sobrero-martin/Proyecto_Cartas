@@ -199,6 +199,12 @@ namespace Proyecto_Cartas.Server.Controllers
             return await usuarioPartidaRepositorio.RevisarDerrota(usuarioPartidaId);
         }
 
+        [HttpGet("cartasPerdidas/{usuarioPartidaId:int}")]
+        public async Task<ActionResult<int>> cartasPerdidas(int usuarioPartidaId)
+        {
+            return await usuarioPartidaRepositorio.CartasPerdidas(usuarioPartidaId);
+        }
+
         [HttpPost("CrearEstadosCartas/{usuarioPartidaId:int}/{tipoMazo}")]
         public async Task<ActionResult<MensajeRespuestaDTO>> CrearEstadosCartas(int usuarioPartidaId, string tipoMazo)
         {

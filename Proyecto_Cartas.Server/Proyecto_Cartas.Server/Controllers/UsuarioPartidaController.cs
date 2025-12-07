@@ -45,5 +45,18 @@ namespace Proyecto_Cartas.Server.Controllers
 
             return CreatedAtAction(nameof(GetAll), new { id = usuarioPartida.Id }, usuarioPartida);
         }
+
+        [HttpGet("nombre/{usuarioPartidaId:int}")]
+        public async Task<ActionResult<MensajeRespuestaDTO>> GetNombre(int usuarioPartidaId)
+        {
+            var nombre = await repositorio.NombreJugador(usuarioPartidaId);
+
+            if(nombre == "")
+            {
+                return NotFound(new MensajeRespuestaDTO { Mensaje = "UsuarioPartida no encontrado." });
+            }
+
+            return Ok(new MensajeRespuestaDTO { Mensaje = nombre });
+        }
     }
 }
