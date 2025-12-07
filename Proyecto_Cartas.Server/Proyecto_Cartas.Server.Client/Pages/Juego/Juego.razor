@@ -546,6 +546,13 @@ else
                 terminaronTurno = false;
                 btnTerminarTurnoText = "Terminar Turno";
                 await Actualizar();
+                if(UsuarioPartidaId < UsuarioPartidaIdRival)
+                {
+                    await Task.Delay(1000);
+                }
+                var url = $"api/Juego/batalla/{PartidaId}/{turnoActual.Id}";
+                var httpRespBatalla = await http.Post<object, List<EventoDTO>>(url, new { });
+                await Actualizar();
             }
 
         }

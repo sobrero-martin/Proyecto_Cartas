@@ -86,7 +86,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 .ToListAsync();
         }
 
-        public async Task<List<Evento>> Batalla(int idPartida, int turnoId)
+        public async Task<List<EventoDTO>> Batalla(int idPartida, int turnoId)
         {
             var cartas = await ObtenerCartasEnCampo(idPartida);
 
@@ -97,9 +97,25 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 { "Campo3", new[] { "Campo3", "Campo2", "Campo1" } }
             };
 
-            var eventos = new List<Evento>();
+            var eventos = new List<EventoDTO>();
 
-            foreach(var atacante in cartas)
+            var turno = await context.Turnos.FirstOrDefaultAsync(t => t.Id == turnoId);
+
+            if (turno!.BatallaEjecutada)
+            {
+                var eventosPrevios = await context.Eventos
+                    .Where(e => e.TurnoID == turnoId && (e.Accion == "Ataque" || e.Accion == "Enviar al Cementerio"))
+                    .Select(e => new EventoDTO
+                    {
+                        Origen = e.Origen,
+                        Destino = e.Destino
+                    })
+                    .ToListAsync();
+
+                return eventosPrevios;
+            }
+
+            foreach (var atacante in cartas)
             {
                 if (atacante.Vida <= 0)
                     continue;
@@ -124,10 +140,12 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                     eventos.Add(evento);
                 }
             }
+            turno.BatallaEjecutada = true;
+            await context.SaveChangesAsync();
             return eventos;
         }
 
-        public async Task<Evento> Ataque(EstadoCartaDTO atacante, EstadoCartaDTO defensor, int turnoId)
+        public async Task<EventoDTO> Ataque(EstadoCartaDTO atacante, EstadoCartaDTO defensor, int turnoId)
         {
             defensor.Vida -= atacante.Ataque;
             if (defensor.Vida < 0)
@@ -149,10 +167,16 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 Destino = defensor.Nombre
             };
 
+            var eventoDTO = new EventoDTO
+            {
+                Origen = atacante.Nombre,
+                Destino = defensor.Nombre
+            };
+
             context.Eventos.Add(evento);
             await context.SaveChangesAsync();
 
-            return evento;
+            return eventoDTO;
         }
 
         public async Task<List<EstadoCartaDTO>> EstadoCartaDeUnUsuario(int usuarioPartidaId)

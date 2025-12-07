@@ -24,10 +24,10 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         {
             var turno = new Turno
             {
-                
+
                 UsuarioPartidaID = turnoDTO.UsuarioPartidaID,
                 Numero = turnoDTO.Numero,
-                Fase = turnoDTO.Fase
+                Fase = turnoDTO.Fase,
             };
 
             context.Turnos.Add(turno);

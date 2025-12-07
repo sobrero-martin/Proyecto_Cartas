@@ -485,7 +485,7 @@ namespace Proyecto_Cartas.Server.Controllers
         }
 
         [HttpPost("batalla/{partidaId:int}/{turnoId:int}")]
-        public async Task<ActionResult<List<Evento>>> Batalla(int partidaId, int turnoId)
+        public async Task<ActionResult<List<EventoDTO>>> Batalla(int partidaId, int turnoId)
         {
             var eventos = await estadoCartaRepositorio.Batalla(partidaId, turnoId);
             if (eventos == null || eventos.Count == 0)

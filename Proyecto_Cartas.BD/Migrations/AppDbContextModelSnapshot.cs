@@ -485,6 +485,9 @@ namespace Proyecto_Cartas.BD.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("BatallaEjecutada")
+                        .HasColumnType("bit");
+
                     b.Property<int>("EstadoRegistro")
                         .HasColumnType("int");
 

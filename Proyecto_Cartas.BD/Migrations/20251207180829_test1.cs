@@ -379,6 +379,7 @@ namespace Proyecto_Cartas.BD.Migrations
                     UsuarioPartidaID = table.Column<int>(type: "int", nullable: false),
                     Numero = table.Column<int>(type: "int", nullable: false),
                     Fase = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BatallaEjecutada = table.Column<bool>(type: "bit", nullable: false),
                     EstadoRegistro = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
