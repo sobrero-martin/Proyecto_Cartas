@@ -552,6 +552,9 @@ else
                 }
                 var url = $"api/Juego/batalla/{PartidaId}/{turnoActual.Id}";
                 var httpRespBatalla = await http.Post<object, List<EventoDTO>>(url, new { });
+                roboCarta = false;
+                ultimoNumeroTurno += 1;
+                await CrearTurno("Robo");
                 await Actualizar();
             }
 
