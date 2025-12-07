@@ -15,6 +15,5 @@ namespace Proyecto_Cartas.BD.Datos.Entidades
 
         public required string Fase { get; set; }
 
-        public bool BatallaEjecutada { get; set; } = false;
     }
 }

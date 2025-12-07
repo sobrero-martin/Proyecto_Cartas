@@ -12,7 +12,7 @@ using Proyecto_Cartas.BD.Datos;
 namespace Proyecto_Cartas.BD.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251207180829_test1")]
+    [Migration("20251207203556_test1")]
     partial class test1
     {
         /// <inheritdoc />
@@ -487,9 +487,6 @@ namespace Proyecto_Cartas.BD.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("BatallaEjecutada")
-                        .HasColumnType("bit");
 
                     b.Property<int>("EstadoRegistro")
                         .HasColumnType("int");

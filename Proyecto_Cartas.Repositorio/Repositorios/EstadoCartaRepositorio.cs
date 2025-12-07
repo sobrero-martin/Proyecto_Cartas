@@ -99,19 +99,18 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
 
             var eventos = new List<EventoDTO>();
 
-            var turno = await context.Turnos.FirstOrDefaultAsync(t => t.Id == turnoId);
+            var turno = await context.Turnos
+                .Include(t => t.UsuarioPartida)
+                .FirstOrDefaultAsync(t => t.Id == turnoId);
 
-            if (turno!.BatallaEjecutada)
+            var yaHayEventos = await context.Eventos.AnyAsync(e => e.Turno.UsuarioPartida.PartidaID == idPartida && e.Turno.Numero == turno.Numero && e.Accion == "Ataque");
+
+            if(yaHayEventos)
             {
                 var eventosPrevios = await context.Eventos
                     .Where(e => e.TurnoID == turnoId && (e.Accion == "Ataque" || e.Accion == "Enviar al Cementerio"))
-                    .Select(e => new EventoDTO
-                    {
-                        Origen = e.Origen,
-                        Destino = e.Destino
-                    })
+                    .Select(e => new EventoDTO { Origen = e.Origen, Destino = e.Destino })
                     .ToListAsync();
-
                 return eventosPrevios;
             }
 
@@ -140,7 +139,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                     eventos.Add(evento);
                 }
             }
-            turno.BatallaEjecutada = true;
+           
             await context.SaveChangesAsync();
             return eventos;
         }
