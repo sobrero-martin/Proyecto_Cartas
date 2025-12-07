@@ -3,7 +3,7 @@
 @inject IHttpServicio http
 @inject HttpClient httpClient
 @inject IJSRuntime js
-
+@inject NavigationManager navHttp
 
 <PageTitle>Partida</PageTitle>
 
@@ -94,16 +94,27 @@ else
         <button class="btn btn-secondary" @onclick="Actualizar">Actualizar</button>
 
         <button class="btn btn-danger" @onclick="PresionoTerminarTurno">@btnTerminarTurnoText</button>
+
+        <button class="btn btn-danger" @onclick="CancelarPartida">Rendirse</button>
         </div>
     </div>
 
     @if (popUpRobar)
-{
+    {
     <div style="position: fixed; color:#26282B ;top: 50%; right: 50%; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
         Ya has robado una carta este turno.
         <button class="btn btn-danger" @onclick="() => popUpRobar = false">X</button>
     </div>
-}
+    }
+
+        @if (popUpCancelar)
+        {
+            <div style="position: fixed; color:#26282B ;top: 50%; right: 50%; background-color: lightblue; padding: 15px; border: 1px solid blue; border-radius: 5px; z-index: 1000;">
+                @notificacionCancelar
+                <button class="btn" @onclick="VolverAlMenu">Volver al menú principal</button>
+            </div>
+        }
+
     
 }
 
@@ -130,8 +141,10 @@ else
     private bool roboCarta= false;
     private bool existeRoboInicial = true;
     private bool popUpRobar = false;
+    private bool popUpCancelar = false;
     private bool terminaronTurno = false;
     private string btnTerminarTurnoText = "Terminar Turno";
+    private string notificacionCancelar = string.Empty;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -151,6 +164,17 @@ else
                 hubConnection.On("ActualizarPartida", async () =>
                 {
                     await InvokeAsync(Actualizar);
+                });
+
+                hubConnection.On<string>("RecibirNotificacionRechazo", (mensaje) =>
+                {
+                    InvokeAsync(() =>
+                    {
+                        popUpCancelar = true;
+                        notificacionCancelar= mensaje;
+                        StateHasChanged();
+                    });
+
                 });
 
                 await hubConnection.StartAsync();
@@ -445,6 +469,7 @@ else
         CartasEnCampo();
         CartasEnCampoRival();
         await ObtenerTurnoActual();
+        await RevisarDerrota();
         StateHasChanged();
     }
 
@@ -538,6 +563,43 @@ else
                 await Actualizar();
             }
 
+        }
+    }
+
+    private async Task CancelarPartida()
+    {
+        var nombreUsuario = await js.InvokeAsync<string>("localStorage.getItem", "NombreUsuario");
+
+        var httpResp = await http.Post<int, MensajeRespuestaDTO>("api/Juego/cancelarPartida/", PerfilUsuarioId);
+
+        if (!httpResp.Error)
+        {
+            await hubConnection!.InvokeAsync("NotificarRechazoPartida", PartidaId, $"El usuario {nombreUsuario} se ha rendido");
+        }
+        else
+        {
+            notificacionCancelar = "Error al rechazar la partida.";
+        }
+    }
+
+    private void VolverAlMenu()
+    {
+        popUpCancelar = false;
+        navHttp.NavigateTo("/menuPrincipal");
+    }
+
+    private async Task RevisarDerrota()
+    {
+        var httpResp = await http.Get<bool>($"api/Juego/revisarDerrota/{UsuarioPartidaId}");
+        if (!httpResp.Error && httpResp.Respuesta)
+        {
+            var httpRespDerrota = await http.Post<int, MensajeRespuestaDTO>("api/Juego/cancelarPartida/", PerfilUsuarioId);
+
+            if (!httpRespDerrota.Error)
+            {
+                var nombreUsuario = await js.InvokeAsync<string>("localStorage.getItem", "NombreUsuario");
+                await hubConnection!.InvokeAsync("NotificarRechazoPartida", PartidaId, $"El usuario {nombreUsuario} ha perdido la partida");
+            }
         }
     }
 

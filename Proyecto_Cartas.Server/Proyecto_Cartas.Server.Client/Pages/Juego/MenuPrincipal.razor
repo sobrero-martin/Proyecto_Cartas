@@ -2,6 +2,7 @@
 @inject IHttpServicio http
 @inject SesionUsuario Sesion
 @inject NavigationManager navHttp
+@inject IJSRuntime js
 
 <PageTitle>Menú Principal</PageTitle>
 
@@ -91,6 +92,7 @@
         if (!httpResp.Error && httpResp.Respuesta != null)
         {
             nombreUsuario = httpResp.Respuesta.Nombre;
+            await js.InvokeVoidAsync("localStorage.setItem", "NombreUsuario", nombreUsuario);
             perfilUsuarioId = httpResp.Respuesta.Id;
             buscarPartida = new BuscarPartidaSolicitudDTO
             {

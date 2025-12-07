@@ -211,6 +211,13 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return usuarioPartidaRival!.Id;
         }
 
+        public async Task<bool> RevisarDerrota(int usuarioPartidaId)
+        {
+            var usuarioPartida = await context.UsuariosPartida.FindAsync(usuarioPartidaId);
+
+            return (usuarioPartida!.CartasPerdidas >= 3);    
+        }
+
     }
 }
 

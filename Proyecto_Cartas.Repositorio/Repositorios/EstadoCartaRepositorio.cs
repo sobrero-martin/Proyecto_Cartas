@@ -303,6 +303,15 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 return null; // La carta especificada no está en la mano o en el campo
             }
             var cartaEnCementerio = await CambiarPosicion(cartaSeleccionada.Id, "Cementerio", turnoId, "Enviar al Cementerio");
+            
+            var usuarioPartida = await context.UsuariosPartida.FirstOrDefaultAsync(up => up.Id == usuarioPartidaId);
+
+            if (usuarioPartida != null)
+            {
+                usuarioPartida.CartasPerdidas += 1;
+                await context.SaveChangesAsync();
+            }
+
             return cartaEnCementerio;
         }
 
