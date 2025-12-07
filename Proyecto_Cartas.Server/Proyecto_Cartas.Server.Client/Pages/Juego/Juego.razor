@@ -112,7 +112,7 @@ else
 
         <button class="btn btn-secondary" @onclick="Actualizar">Actualizar</button>
 
-        <button class="btn btn-danger" @onclick="CartasEnCementerio">Terminar Turno</button>
+        <button class="btn btn-danger" @onclick="PresionoTerminarTurno">@btnTerminarTurnoText</button>
         </div>
     </div>
     <h1>@PerfilUsuarioId</h1>
@@ -152,6 +152,8 @@ else
     private bool roboCarta= false;
     private bool existeRoboInicial = true;
     private bool popUpRobar = false;
+    private bool terminaronTurno = false;
+    private string btnTerminarTurnoText = "Terminar Turno";
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -526,21 +528,27 @@ else
     }
 
 
-    // private Task<bool> TerminoTurno(int usuarioPartidaId)
-    // {
-    //     Lógica para determinar si el turno ha terminado
-    //     return Task.FromResult(true);
-    // }
+    private async Task  PresionoTerminarTurno()
+    {
+        await CrearTurno("Batalla");
+        btnTerminarTurnoText = "Esperando al Rival...";
+        terminaronTurno = true;
 
-    // private async Task TerminarTurno()
-    // {
-    //     if (await TerminoTurno(UsuarioPartidaId))
-    //     {
-    //         roboCarta = false;
-    //         await CrearTurno("Robo");
-    //         await Actualizar();
+        while (terminaronTurno == true)
+        {
+            await Task.Delay(1000);
+            var response = await httpClient.
+            GetAsync($"api/Juego/turno/presionoTerminarTurno/{UsuarioPartidaIdRival}/{turnoActual.Numero}/{"Batalla"}");
 
-    //     }
-    // }
-    
+            var isTrue = await response.Content.ReadFromJsonAsync<bool>();
+            if (response.IsSuccessStatusCode && isTrue)
+            {
+                terminaronTurno = false;
+                btnTerminarTurnoText = "Terminar Turno";
+                await Actualizar();
+            }
+
+        }
+    }
+
 }

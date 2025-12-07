@@ -13,6 +13,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         
         Task<TurnoDTO> CrearTurno(TurnoCrearDTO turnoDTO);
         Task<bool> ExisteRoboInicial(int usuarioPartidaId);
+        Task<bool> PresionoTerminarTurno(int usuarioPartidaId, int numero, string fase);
         Task<TurnoDTO?> UltimoTurno(int usuarioPartidaId);
     }
 }

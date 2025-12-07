@@ -69,5 +69,13 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 ;
 
         }
+
+        public async Task<bool> PresionoTerminarTurno(int usuarioPartidaId, int numero, string fase)
+        {
+            return await context.Turnos
+                .AnyAsync(t => t.UsuarioPartidaID == usuarioPartidaId && t.Numero == numero && t.Fase == fase);
+        }
+
+
     }
 }

@@ -453,6 +453,14 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(existe);
         }
 
+        [HttpGet("turno/presionoTerminarTurno/{usuarioPartidaId:int}/{numero:int}/{fase}")] // api/turno/presionoTerminarTurno/{usuarioPartidaId}/{numero}/{fase})]
+
+        public async Task<ActionResult<bool>> GetPresionoTerminarTurno(int usuarioPartidaId, int numero, string fase)
+        {
+            var presiono = await turnoRepositorio.PresionoTerminarTurno(usuarioPartidaId, numero, fase);
+            return Ok(presiono);
+        }
+
         [HttpGet("turno/{id:int}")] // api/turno/{id}
         public async Task<ActionResult<TurnoDTO>> GetTurnoPorId(int id)
         {
