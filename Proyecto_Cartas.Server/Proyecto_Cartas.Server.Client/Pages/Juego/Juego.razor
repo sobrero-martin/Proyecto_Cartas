@@ -9,6 +9,7 @@
 
 <div class="partida">
 
+    <div class="header">
     <div>
         @if (turnoActual != null)
         {
@@ -20,6 +21,23 @@
         }
 
     </div>
+    <div class="hp">
+            @if(Cementerio == 0)
+            {
+                <img src="@($"img/ui/3HP.png")" alt="Vida = @Cementerio"/>
+            } else if(Cementerio == 1){
+                <img src="@($"img/ui/2HP.png")" alt="Vida = @Cementerio" />
+            } else if(Cementerio == 2)
+            {
+                <img src="@($"img/ui/1HP.png")" alt="Vida = @Cementerio" />
+            } else
+            {
+                <img src="@($"img/ui/0HP.png")" alt="Vida = @Cementerio" />
+            }
+
+    </div>
+    </div>
+
 
 @if(cartasJugador.Count == 0)
 {
