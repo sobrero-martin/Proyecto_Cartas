@@ -9,7 +9,17 @@
 
 <div class="partida">
 
-<h1>Partida #@PartidaId</h1>
+    <div>
+        @if (turnoActual != null)
+        {
+            <h3>Turno Actual: @turnoActual.Numero     Fase de @turnoActual.Fase</h3>
+        }
+        else
+        {
+            <h3>Cargando turno...</h3>
+        }
+
+    </div>
 
 @if(cartasJugador.Count == 0)
 {
@@ -17,25 +27,8 @@
 }
 else
 {
-    <h3>Cartas del Rival:</h3>
-    <div class="testeo">
-        @foreach(var carta in cartasRival)
-        {
-            <Carta carta="carta"/>
-        }
-    </div>
 
-    <h3>Cartas del Jugador:</h3>
-
-    <div class="testeo">
-        
-        @foreach (var carta in cartasJugador)
-        {
-            <Carta carta="carta"/>
-        }
-    </div>
-
-    <h3>Tablero Rival:</h3>
+    <h3>Tablero del Rival</h3>
     <div class="tablero">
         <div class="campo" @onclick="@(() => ColocarCarta("Campo1"))">
             @foreach (var carta in cartasEnCampoRival.Where(c => c.Posicion == "Campo1"))
@@ -57,19 +50,7 @@ else
         </div>
     </div>
 
-    <div>
-            @if (turnoActual != null)
-            {
-                <h3>Turno Actual: @turnoActual.Numero     Fase de @turnoActual.Fase</h3>
-            }
-            else
-            {
-                <h3>Cargando turno...</h3>
-            }
-
-    </div>
-
-    <h3>Tablero Jugador:</h3>
+    <h3>Tablero del Jugador</h3>
     <div class="tablero">
         <div class="campo" @onclick="@(() => ColocarCarta("Campo1"))">
             @foreach (var carta in cartasEnCampo.Where(c => c.Posicion == "Campo1"))
@@ -115,9 +96,6 @@ else
         <button class="btn btn-danger" @onclick="PresionoTerminarTurno">@btnTerminarTurnoText</button>
         </div>
     </div>
-    <h1>@PerfilUsuarioId</h1>
-    <h1>@UsuarioPartidaIdRival</h1>
-    <h1>@UsuarioPartidaId</h1>
 
     @if (popUpRobar)
 {
@@ -533,6 +511,8 @@ else
         await CrearTurno("Batalla");
         btnTerminarTurnoText = "Esperando al Rival...";
         terminaronTurno = true;
+
+        await InvokeAsync(StateHasChanged);
 
         while (terminaronTurno == true)
         {

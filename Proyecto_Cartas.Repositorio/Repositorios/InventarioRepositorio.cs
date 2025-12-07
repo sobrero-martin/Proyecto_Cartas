@@ -33,22 +33,43 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             List<Inventario> cartasIniciales = new List<Inventario>();
             if (opcion == 1)
             {
-                CartaDTO? carta1 = await cartaRepositorio.NombreCarta("Rey Pepe");
-                CartaDTO? carta2 = await cartaRepositorio.NombreCarta("Caballero Pepe");
+                CartaDTO? carta1 = await cartaRepositorio.NombreCarta("Caballero");
+                CartaDTO? carta2 = await cartaRepositorio.NombreCarta("Guardian");
+                CartaDTO? carta3 = await cartaRepositorio.NombreCarta("Rey");
+                CartaDTO? carta4 = await cartaRepositorio.NombreCarta("Mago");
+                CartaDTO? carta5 = await cartaRepositorio.NombreCarta("Sacerdote");
 
                 cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta1!.Id, Tipo = "Mazo Inicial" });
                 cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta2!.Id, Tipo = "Mazo Inicial" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta3!.Id, Tipo = "Mazo Inicial" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta4!.Id, Tipo = "Mazo Inicial" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta5!.Id, Tipo = "Mazo Inicial" });
+
                 cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta1!.Id, Tipo = "Inventario" });
                 cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta2!.Id, Tipo = "Inventario" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta3!.Id, Tipo = "Inventario" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta4!.Id, Tipo = "Inventario" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta5!.Id, Tipo = "Inventario" });
             }
             else if (opcion == 2)
             {
-                CartaDTO? carta1 = await cartaRepositorio.NombreCarta("Rey Juan");
-                CartaDTO? carta2 = await cartaRepositorio.NombreCarta("Caballero Juan");
+                CartaDTO? carta1 = await cartaRepositorio.NombreCarta("Druida");
+                CartaDTO? carta2 = await cartaRepositorio.NombreCarta("Cultista");
+                CartaDTO? carta3 = await cartaRepositorio.NombreCarta("Viajera");
+                CartaDTO? carta4 = await cartaRepositorio.NombreCarta("Hechicera");
+                CartaDTO? carta5 = await cartaRepositorio.NombreCarta("Luchador");
+
                 cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta1!.Id, Tipo = "Mazo Inicial" });
                 cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta2!.Id, Tipo = "Mazo Inicial" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta3!.Id, Tipo = "Mazo Inicial" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta4!.Id, Tipo = "Mazo Inicial" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta5!.Id, Tipo = "Mazo Inicial" });
+
                 cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta1!.Id, Tipo = "Inventario" });
                 cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta2!.Id, Tipo = "Inventario" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta3!.Id, Tipo = "Inventario" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta4!.Id, Tipo = "Inventario" });
+                cartasIniciales.Add(new Inventario { PerfilUsuarioID = perfilUsuarioId, CartaID = carta5!.Id, Tipo = "Inventario" });
             }
 
             await context.Inventarios.AddRangeAsync(cartasIniciales);
