@@ -43,6 +43,19 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(inventario);
         }
 
+        [HttpGet("estadoCartas/{perfilUsuarioId:int}")]
+        public async Task<ActionResult<List<EstadoCartaDTO>>> GetEstadoCartas(int perfilUsuarioId)
+        {
+            var estadoCartas = await repositorio.GetEstadoCartas(perfilUsuarioId);
+
+            if(estadoCartas == null || estadoCartas.Count == 0)
+            {
+                return NotFound("No se encontraron cartas en el inventario proporcionado.");
+            }
+
+            return Ok(estadoCartas);
+        }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {

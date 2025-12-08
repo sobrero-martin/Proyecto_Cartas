@@ -89,5 +89,46 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 })
                 .ToListAsync();
         }
+
+        public async Task<List<EstadoCartaDTO>> GetEstadoCartas(int perfilUsuarioId)
+        {
+            var inventarioSinFiltrar = await GetByPerfilUsuarioId(perfilUsuarioId);
+
+            var listaEstados = new List<EstadoCartaDTO>();  
+
+            if(inventarioSinFiltrar == null || inventarioSinFiltrar.Count == 0)
+            {
+                return listaEstados;
+            }
+
+            var inventario = inventarioSinFiltrar
+                .Where(i => i.Tipo == "Inventario")
+                .ToList();
+
+            foreach (InventarioDTO carta in inventario)
+            {
+                var estadoCarta = await context.Cartas
+                    .Where(c => c.Id == carta.CartaId)
+                    .Select(c => new EstadoCartaDTO
+                    {
+                        Id = c.Id,
+                        UsuarioPartidaID = 0,
+                        InventarioID = 0,
+                        Nombre = c.NombreCarta,
+                        Ataque = c.Ataque,
+                        Vida = c.Vida,
+                        Velocidad = c.Velocidad,
+                        Posicion = "Inventario"
+                    })
+                    .FirstOrDefaultAsync();
+
+                if(estadoCarta != null)
+                {
+                    listaEstados.Add(estadoCarta);
+                }
+            }
+
+            return listaEstados;
+        }
     }
 }

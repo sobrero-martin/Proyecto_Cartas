@@ -1,0 +1,57 @@
+﻿@page "/inventario"
+@inject IHttpServicio http
+@inject SesionUsuario Sesion
+@inject NavigationManager navHttp
+@inject IJSRuntime js
+
+<h3>Inventario</h3>
+
+<div class="inventario">
+@foreach (var carta in cartasInventario)
+{
+    <Carta carta="carta" />
+}
+</div>
+
+@code {
+    private int perfilUsuarioId;
+    private List<EstadoCartaDTO> cartasInventario = new List<EstadoCartaDTO>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var idStr = await js.InvokeAsync<string>("localStorage.getItem", "UsuarioId");
+            if (!string.IsNullOrEmpty(idStr) && int.TryParse(idStr, out var id))
+            {
+                Sesion.UsuarioId = id;
+
+                if (Sesion.UsuarioId == 0)
+                {
+                    navHttp.NavigateTo("/");
+                }
+
+                var httpRespPerfil = await http.Get<PerfilUsuarioDTO>($"api/PerfilUsuario/ObtenerPerfilUsuarioId/{Sesion.UsuarioId}");
+                if (!httpRespPerfil.Error && httpRespPerfil.Respuesta != null)
+                {
+                    perfilUsuarioId = httpRespPerfil.Respuesta.Id;
+                    var httpResp = await http.Get<List<EstadoCartaDTO>>($"api/Inventario/estadoCartas/{perfilUsuarioId}");
+                    if (!httpResp.Error && httpResp.Respuesta != null)
+                    {
+                        cartasInventario = httpResp.Respuesta;
+                        StateHasChanged();
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error al obtener las cartas.");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Error al obtener el perfil del usuario.");
+                }
+            }
+        }
+    }
+
+}
