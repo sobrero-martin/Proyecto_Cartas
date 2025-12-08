@@ -164,8 +164,9 @@ else
             </div>
         }
 
-    
-}
+
+        }
+       
 
 </div>
 
@@ -197,6 +198,7 @@ else
     private int vidaRival = 3;
     private string nombreRival = string.Empty;
     private string nombreJugador = string.Empty;
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -250,7 +252,7 @@ else
                     nombreRival = httpRespNombreRival.Respuesta.Mensaje;
                 }
             }
-
+            
             StateHasChanged();
         }
     }
@@ -394,6 +396,7 @@ else
 
     private async Task RobarCarta()
     {
+        ultimoNumeroTurno = turnoActual!.Numero;
         if(roboCarta==false && (turnoActual.Fase == "Robo Inicial" || turnoActual.Fase == "Robo"))
         { 
             try
@@ -528,6 +531,7 @@ else
         CartasEnCampoRival();
         await ObtenerTurnoActual();
         await RevisarDerrota();
+        await VidaRival();
         StateHasChanged();
     }
 
@@ -611,13 +615,24 @@ else
                 await Actualizar();
                 if(UsuarioPartidaId < UsuarioPartidaIdRival)
                 {
-                    await Task.Delay(1000);
+                    await Task.Delay(300);
                 }
                 var url = $"api/Juego/batalla/{PartidaId}/{turnoActual.Id}";
                 var httpRespBatalla = await http.Post<object, List<EventoDTO>>(url, new { });
                 roboCarta = false;
                 ultimoNumeroTurno += 1;
+                var listaEventos = httpRespBatalla.Respuesta;
+
+                foreach (var evento in httpRespBatalla.Respuesta)
+                {
+                    await js.InvokeVoidAsync("animarCarta.atacar", evento.Origen);
+                    await Task.Delay(500);
+                    await js.InvokeVoidAsync("animarCarta.atacada", evento.Destino);
+                    await Task.Delay(500);
+                }
+                
                 await CrearTurno("Robo");
+                
                 await Actualizar();
             }
 

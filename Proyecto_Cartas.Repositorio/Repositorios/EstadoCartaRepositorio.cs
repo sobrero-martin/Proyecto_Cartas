@@ -94,7 +94,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             {
                 { "Campo1", new[] { "Campo1", "Campo2", "Campo3" } },
                 { "Campo2", new[] { "Campo2", "Campo1", "Campo3" } },
-                { "Campo3", new[] { "Campo3", "Campo2", "Campo1" } }
+                { "Campo3", new[] { "Campo3", "Campo1", "Campo2" } }
             };
 
             var eventos = new List<EventoDTO>();
@@ -106,9 +106,13 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             var yaHayEventos = await context.Eventos.AnyAsync(e => e.Turno.UsuarioPartida.PartidaID == idPartida && e.Turno.Numero == turno.Numero && e.Accion == "Ataque");
 
             if(yaHayEventos)
-            {
+            { 
                 var eventosPrevios = await context.Eventos
-                    .Where(e => e.TurnoID == turnoId && (e.Accion == "Ataque" || e.Accion == "Enviar al Cementerio"))
+                    .Include(e => e.Turno)
+                    .ThenInclude(t => t.UsuarioPartida)
+                    .Where(e => e.Turno.UsuarioPartida.PartidaID == idPartida 
+                             && e.Turno.Numero == turno.Numero
+                             && (e.Accion == "Ataque" || e.Accion == "Enviar al Cementerio"))
                     .Select(e => new EventoDTO { Origen = e.Origen, Destino = e.Destino })
                     .ToListAsync();
                 return eventosPrevios;

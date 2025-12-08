@@ -1,6 +1,6 @@
-﻿
+﻿@inject IJSRuntime js
 
-<div class="carta" @onclick="() => OnCartaClick.InvokeAsync(carta)">
+<div class="carta" data-nombre="@carta.Nombre" @onclick="() => OnCartaClick.InvokeAsync(carta)">
     <div class="carta-header">
         <p>@carta.Nombre</p>
     </div>
@@ -18,4 +18,5 @@
 @code {
     [Parameter] public EstadoCartaDTO carta { get; set; } = default!;
     [Parameter] public EventCallback<EstadoCartaDTO> OnCartaClick { get; set; }
+
 }
