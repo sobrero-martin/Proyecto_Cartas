@@ -43,10 +43,10 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(inventario);
         }
 
-        [HttpGet("estadoCartas/{perfilUsuarioId:int}")]
-        public async Task<ActionResult<List<EstadoCartaDTO>>> GetEstadoCartas(int perfilUsuarioId)
+        [HttpGet("estadoCartas/{perfilUsuarioId:int}/{tipo}")]
+        public async Task<ActionResult<List<EstadoCartaDTO>>> GetEstadoCartas(int perfilUsuarioId, string tipo)
         {
-            var estadoCartas = await repositorio.GetEstadoCartas(perfilUsuarioId);
+            var estadoCartas = await repositorio.GetEstadoCartas(perfilUsuarioId, tipo);
 
             if(estadoCartas == null || estadoCartas.Count == 0)
             {
@@ -54,6 +54,51 @@ namespace Proyecto_Cartas.Server.Controllers
             }
 
             return Ok(estadoCartas);
+        }
+
+        [HttpPost("agregarCarta")]
+        public async Task<ActionResult<MensajeRespuestaDTO>> AgregarCartaMazo([FromBody] EstadoCartaDTO carta, [FromQuery] int perfilUsuarioId)
+        {
+            bool exito = await repositorio.AgregarCartaMazo(carta, perfilUsuarioId);
+            if (!exito)
+            {
+                return BadRequest(new MensajeRespuestaDTO
+                {
+                    Mensaje = "Error al agregar la carta al mazo."
+                });
+            }
+            return Ok(new MensajeRespuestaDTO
+            {
+                Mensaje = "Carta agregada al mazo exitosamente."
+            });
+        }
+
+        [HttpPost("quitarCarta")]
+        public async Task<ActionResult<MensajeRespuestaDTO>> QuitarCartaMazo([FromBody] EstadoCartaDTO carta, [FromQuery] int perfilUsuarioId)
+        {
+            bool exito = await repositorio.QuitarCartaMazo(carta, perfilUsuarioId);
+            if (!exito)
+            {
+                return BadRequest(new MensajeRespuestaDTO
+                {
+                    Mensaje = "Error al quitar la carta del mazo."
+                });
+            }
+            return Ok(new MensajeRespuestaDTO
+            {
+                Mensaje = "Carta quitada del mazo exitosamente."
+            });
+        }
+
+        [HttpPost("revisarCarta")]
+        public async Task<ActionResult<bool>> RevisarCartaMazo([FromBody] EstadoCartaDTO carta,[FromQuery] int perfilUsuarioId)
+        {
+            bool exito = await repositorio.RevisarCartaMazo(carta, perfilUsuarioId);
+            if (!exito)
+            {
+                return Ok(false);
+            }
+            return Ok(true);
         }
 
         [HttpGet]

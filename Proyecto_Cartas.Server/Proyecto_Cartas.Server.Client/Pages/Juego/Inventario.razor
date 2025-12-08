@@ -9,9 +9,11 @@
 <div class="inventario">
 @foreach (var carta in cartasInventario)
 {
-    <Carta carta="carta" />
+    <Carta carta="@carta" />
 }
 </div>
+
+<button class="btn" @onclick='() => navHttp.NavigateTo("/inventario/editarMazo")'>Editar Mazo Inicial</button>
 
 @code {
     private int perfilUsuarioId;
@@ -35,7 +37,7 @@
                 if (!httpRespPerfil.Error && httpRespPerfil.Respuesta != null)
                 {
                     perfilUsuarioId = httpRespPerfil.Respuesta.Id;
-                    var httpResp = await http.Get<List<EstadoCartaDTO>>($"api/Inventario/estadoCartas/{perfilUsuarioId}");
+                    var httpResp = await http.Get<List<EstadoCartaDTO>>($"api/Inventario/estadoCartas/{perfilUsuarioId}/Inventario");
                     if (!httpResp.Error && httpResp.Respuesta != null)
                     {
                         cartasInventario = httpResp.Respuesta;

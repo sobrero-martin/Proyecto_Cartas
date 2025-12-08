@@ -7,6 +7,9 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
     {
         Task<bool> MazoInicial(int usuarioId, int opcion);
         Task<List<InventarioDTO>> GetByPerfilUsuarioId(int perfilUsuarioId);
-        Task<List<EstadoCartaDTO>> GetEstadoCartas(int perfilUsuarioId);
+        Task<List<EstadoCartaDTO>> GetEstadoCartas(int perfilUsuarioId, string tipo);
+        Task<bool> AgregarCartaMazo(EstadoCartaDTO carta, int perfilUsuarioId);
+        Task<bool> RevisarCartaMazo(EstadoCartaDTO carta, int perfilUsuarioId);
+        Task<bool> QuitarCartaMazo(EstadoCartaDTO carta, int perfilUsuarioId);
     }
 }

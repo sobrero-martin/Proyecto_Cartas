@@ -77,6 +77,72 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return true;
         }
 
+        public async Task<bool> AgregarCartaMazo(EstadoCartaDTO carta, int perfilUsuarioId)
+        {
+
+            var cartasInventario = await context.Inventarios
+                .Where(c => c.PerfilUsuarioID == perfilUsuarioId && c.Tipo == "Inventario" && c.Carta.NombreCarta == carta.Nombre)
+                .ToListAsync();
+
+            var cartasMazo = await context.Inventarios
+                .Where(c => c.PerfilUsuarioID == perfilUsuarioId && c.Tipo == "Mazo Inicial" && c.Carta.NombreCarta == carta.Nombre)
+                .ToListAsync();
+
+            if (cartasInventario.Count > cartasMazo.Count)
+            {
+                context.Inventarios.Add(new Inventario
+                {
+                    PerfilUsuarioID = perfilUsuarioId,
+                    CartaID = cartasInventario.First().CartaID,
+                    Tipo = "Mazo Inicial"
+                });
+
+                await context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> QuitarCartaMazo(EstadoCartaDTO carta, int perfilUsuarioId)
+        {
+           
+            var cartasMazo = await context.Inventarios
+                .Where(c => c.PerfilUsuarioID == perfilUsuarioId && c.Tipo == "Mazo Inicial" && c.Carta.NombreCarta == carta.Nombre)
+                .ToListAsync();
+
+            if (cartasMazo.Any())
+            {
+                var cartaAQuitar = cartasMazo.First();
+                context.Inventarios.Remove(cartaAQuitar);
+
+                await context.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+
+
+        public async Task<bool> RevisarCartaMazo(EstadoCartaDTO carta, int perfilUsuarioId)
+        {
+            var cartasInventario = await context.Inventarios
+                .Where(c => c.PerfilUsuarioID == perfilUsuarioId && c.Tipo == "Inventario" && c.Carta.NombreCarta == carta.Nombre)
+                .ToListAsync();
+
+            var cartasMazo = await context.Inventarios
+                .Where(c => c.PerfilUsuarioID == perfilUsuarioId && c.Tipo == "Mazo Inicial" && c.Carta.NombreCarta == carta.Nombre)
+                .ToListAsync();
+
+
+            if (cartasInventario.Count > cartasMazo.Count)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public async Task<List<InventarioDTO>> GetByPerfilUsuarioId(int perfilUsuarioId)
         {
             return await context.Inventarios
@@ -90,7 +156,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                 .ToListAsync();
         }
 
-        public async Task<List<EstadoCartaDTO>> GetEstadoCartas(int perfilUsuarioId)
+        public async Task<List<EstadoCartaDTO>> GetEstadoCartas(int perfilUsuarioId, string tipo)
         {
             var inventarioSinFiltrar = await GetByPerfilUsuarioId(perfilUsuarioId);
 
@@ -102,7 +168,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             }
 
             var inventario = inventarioSinFiltrar
-                .Where(i => i.Tipo == "Inventario")
+                .Where(i => i.Tipo == tipo)
                 .ToList();
 
             foreach (InventarioDTO carta in inventario)
@@ -118,7 +184,7 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
                         Ataque = c.Ataque,
                         Vida = c.Vida,
                         Velocidad = c.Velocidad,
-                        Posicion = "Inventario"
+                        Posicion = tipo
                     })
                     .FirstOrDefaultAsync();
 

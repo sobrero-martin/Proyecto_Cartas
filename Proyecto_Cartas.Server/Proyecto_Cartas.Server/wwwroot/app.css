@@ -450,6 +450,11 @@ form {
     display: flex;
 }
 
+.invalida {
+    filter: grayscale(100%);
+    opacity: 0.5;
+}
+
 .sobre button{
     position: absolute;
     top:50%;

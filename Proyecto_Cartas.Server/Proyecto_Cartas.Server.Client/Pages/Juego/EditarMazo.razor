@@ -1,0 +1,146 @@
+﻿@page "/inventario/editarMazo"
+@inject IHttpServicio http
+@inject SesionUsuario Sesion
+@inject NavigationManager navHttp
+@inject IJSRuntime js
+
+<h3>Mazo:</h3>
+
+<div class="inventario">
+    @foreach (var carta in cartasMazo)
+    {
+        <Carta carta="@carta" OnCartaClick="SeleccionarCartaMazo" />
+    }
+</div>
+
+<button class="btn" @onclick="QuitarCarta">Quitar carta</button>
+
+<h3>Inventario:</h3>
+
+<div class="inventario">
+    @foreach (var carta in cartasInventario)
+    {
+        bool esValida = cartasValidas.ContainsKey(carta.Id) && cartasValidas[carta.Id];
+
+        <Carta carta="@carta" Class="@(esValida ? "" : "invalida")" OnCartaClick="SeleccionarCarta" />
+    }
+</div>
+
+<button class="btn" @onclick="AgregarCarta">Agregar carta</button>
+
+@code {
+    private int perfilUsuarioId;
+    private List<EstadoCartaDTO> cartasInventario = new List<EstadoCartaDTO>();
+    private List<EstadoCartaDTO> cartasMazo = new List<EstadoCartaDTO>();
+    private Dictionary<int, bool> cartasValidas = new();
+    private EstadoCartaDTO? cartaSeleccionada;
+    private EstadoCartaDTO? cartaSeleccionadaMazo;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var idStr = await js.InvokeAsync<string>("localStorage.getItem", "UsuarioId");
+            if (!string.IsNullOrEmpty(idStr) && int.TryParse(idStr, out var id))
+            {
+                Sesion.UsuarioId = id;
+
+                if (Sesion.UsuarioId == 0)
+                {
+                    navHttp.NavigateTo("/");
+                }
+
+                await CargarDatos();
+            }
+        }
+    }
+
+    public async Task CargarDatos()
+    {
+        var httpRespPerfil = await http.Get<PerfilUsuarioDTO>($"api/PerfilUsuario/ObtenerPerfilUsuarioId/{Sesion.UsuarioId}");
+        if (!httpRespPerfil.Error && httpRespPerfil.Respuesta != null)
+        {
+            perfilUsuarioId = httpRespPerfil.Respuesta.Id;
+            var httpResp = await http.Get<List<EstadoCartaDTO>>($"api/Inventario/estadoCartas/{perfilUsuarioId}/Inventario");
+            if (!httpResp.Error && httpResp.Respuesta != null)
+            {
+                cartasInventario = httpResp.Respuesta;
+                foreach (var carta in cartasInventario)
+                {
+                    bool existe = await RevisarCarta(carta);
+                    cartasValidas[carta.Id] = existe;
+                }
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("Error al obtener las cartas del inventario.");
+            }
+            var httpRespMazo = await http.Get<List<EstadoCartaDTO>>($"api/Inventario/estadoCartas/{perfilUsuarioId}/Mazo Inicial");
+            if (!httpRespMazo.Error && httpRespMazo.Respuesta != null)
+            {
+                cartasMazo = httpRespMazo.Respuesta;
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("Error al obtener las cartas del mazo.");
+            }
+
+        }
+        else
+        {
+            Console.WriteLine("Error al obtener el perfil del usuario.");
+        }
+    }
+
+    public async Task<bool> RevisarCarta(EstadoCartaDTO carta)
+    {
+        var resp = await http.Post<EstadoCartaDTO, bool>($"api/Inventario/revisarCarta?perfilUsuarioId={perfilUsuarioId}", carta);
+
+        if(resp.Error)
+        {
+            Console.WriteLine("Error al revisar la carta.");
+            return false;
+        }
+
+        return resp.Respuesta;
+    }
+
+    public async Task AgregarCarta()
+    {
+        if(cartaSeleccionada == null)
+        {
+            return;
+        }
+
+        var resp = await http.Post<EstadoCartaDTO, MensajeRespuestaDTO>($"api/Inventario/agregarCarta?perfilUsuarioId={perfilUsuarioId}", cartaSeleccionada);
+        await CargarDatos();
+        StateHasChanged();
+    }
+
+    public async Task QuitarCarta()
+    {
+        if (cartaSeleccionadaMazo == null)
+        {
+            return;
+        }
+
+        var resp = await http.Post<EstadoCartaDTO, MensajeRespuestaDTO>($"api/Inventario/quitarCarta?perfilUsuarioId={perfilUsuarioId}", cartaSeleccionadaMazo);
+        await CargarDatos();
+        StateHasChanged();
+    }
+
+    private void SeleccionarCarta(EstadoCartaDTO carta)
+    {
+        cartaSeleccionada = carta;
+        StateHasChanged();
+    }
+
+    private void SeleccionarCartaMazo(EstadoCartaDTO carta)
+    {
+        cartaSeleccionadaMazo = carta;
+        StateHasChanged();
+    }
+}
