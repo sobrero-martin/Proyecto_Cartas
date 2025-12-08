@@ -157,6 +157,39 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
             return lista;
         }
 
+        public async Task<EstadoCartaDTO?> GetCartaAzar(int perfilUsuarioId)
+        {
+            var cartaRandom = await context.Cartas
+                .OrderBy(c => Guid.NewGuid())
+                .FirstOrDefaultAsync();
+
+            if (cartaRandom == null)
+                return null;
+
+            var inventario = new Inventario
+            {
+                PerfilUsuarioID = perfilUsuarioId,
+                CartaID = cartaRandom.Id,
+                Tipo = "Inventario"
+            };
+
+            context.Inventarios.Add(inventario);
+            await context.SaveChangesAsync();   
+
+            var estadoCartaDTO = new EstadoCartaDTO
+            {
+                UsuarioPartidaID = perfilUsuarioId,
+                InventarioID = inventario.Id,
+                Nombre = cartaRandom.NombreCarta!,
+                Ataque = cartaRandom.Ataque!,
+                Vida = cartaRandom.Vida!,
+                Velocidad = cartaRandom.Velocidad!,
+                Posicion = "Inventario"
+            };
+
+            return estadoCartaDTO;
+        }
+
 
     }
 }

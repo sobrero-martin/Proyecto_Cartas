@@ -174,5 +174,16 @@ namespace Proyecto_Cartas.Server.Controllers
             return Ok(carta);
         }
 
+        [HttpPost("abrirSobre")]
+        public async Task<ActionResult<EstadoCartaDTO?>> GetCartaAzar([FromBody] int perfilUsuarioId)
+        {
+            var cartaAzar = await repositorio.GetCartaAzar(perfilUsuarioId);
+            if (cartaAzar == null)
+            {
+                return NotFound("No se encontraron cartas");
+            }
+            return Ok(cartaAzar);
+
+        }
     }
 }

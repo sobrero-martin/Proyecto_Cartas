@@ -1,0 +1,70 @@
+﻿@page "/tienda"
+@inject IHttpServicio http
+@inject SesionUsuario Sesion
+@inject NavigationManager navHttp
+@inject IJSRuntime js
+
+<h3>Tienda</h3>
+
+<div class="tienda">
+
+<div class="sobre">
+<img src ="img/sobre.png" alt="sobre"/>
+<button class="btn" @onclick="AbrirSobre">Abrir sobre</button>
+</div>
+@if(cartaObtenida != null)
+{
+    <div class="cartaObtenida">
+        <button class="btn btn-danger" @onclick="() => { cartaObtenida = null; StateHasChanged(); }">X</button>
+        <Carta carta="cartaObtenida"></Carta>
+    </div>
+}
+</div>
+
+@code {
+    private int perfilUsuarioId;
+    private EstadoCartaDTO? cartaObtenida = null;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var idStr = await js.InvokeAsync<string>("localStorage.getItem", "UsuarioId");
+            if (!string.IsNullOrEmpty(idStr) && int.TryParse(idStr, out var id))
+            {
+                Sesion.UsuarioId = id;
+
+                if (Sesion.UsuarioId == 0)
+                {
+                    navHttp.NavigateTo("/");
+                }
+
+                var httpRespPerfil = await http.Get<PerfilUsuarioDTO>($"api/PerfilUsuario/ObtenerPerfilUsuarioId/{Sesion.UsuarioId}");
+                if (!httpRespPerfil.Error && httpRespPerfil.Respuesta != null)
+                {
+                    perfilUsuarioId = httpRespPerfil.Respuesta.Id; 
+                }
+                else
+                {
+                    Console.WriteLine("Error al obtener el perfil del usuario.");
+                }
+            }
+        }
+    }
+
+    private async Task AbrirSobre()
+    {
+        var httpResp = await http.Post<int, EstadoCartaDTO>($"api/Carta/abrirSobre", perfilUsuarioId);
+
+        if(!httpResp.Error && httpResp.Respuesta != null)
+        {
+            cartaObtenida = httpResp.Respuesta;
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Error al abrir el sobre.");
+        }
+    }
+
+}

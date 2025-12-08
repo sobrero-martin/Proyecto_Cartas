@@ -424,6 +424,44 @@ form {
     transform: scale(1.2);
 }
 
+.cartaObtenida {
+    background-color: #353941;
+    padding: 30px;
+    border: 1px solid #90b8f8;
+    border-radius: 15px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(0%, -50%)
+}
+
+.sobre{
+    position: relative;
+    display: inline-block;
+}
+
+.sobre img{
+    display: block;
+    width: 100px;
+    height: auto;
+}
+
+.tienda{
+    display: flex;
+}
+
+.sobre button{
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform: translate(-50%, -50%);
+    background-color: transparent !important;
+    border: none;
+    color: black;
+    width: 100px;
+    height: 100%;
+}
+
 .perfilTitulo {
     display: flex;
     flex-direction: column;

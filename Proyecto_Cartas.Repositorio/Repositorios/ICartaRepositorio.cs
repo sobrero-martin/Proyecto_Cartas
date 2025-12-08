@@ -14,5 +14,6 @@ namespace Proyecto_Cartas.Repositorio.Repositorios
         Task<List<CartaDTO?>> NivelCarta(int nivel);
         Task<CartaDTO?> NombreCarta(string nombre);
         Task<List<CartaDTO?>> TipoCarta(string tipo);
+        Task<EstadoCartaDTO?> GetCartaAzar(int perfilUsuarioId);
     }
 }
