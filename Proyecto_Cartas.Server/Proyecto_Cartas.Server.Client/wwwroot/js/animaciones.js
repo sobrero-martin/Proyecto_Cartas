@@ -8,7 +8,7 @@
 
                 setTimeout(() => {
                     carta.classList.remove("atacando");
-                }, 300);
+                }, 500);
             },
 
             atacada: function (nombre) {
@@ -19,6 +19,6 @@
 
                 setTimeout(() => {
                     carta.classList.remove("atacada");
-                }, 300);
+                }, 500);
             }
         };

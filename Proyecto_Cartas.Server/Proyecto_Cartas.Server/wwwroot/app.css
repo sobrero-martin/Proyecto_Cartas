@@ -344,7 +344,7 @@ body {
 
 .login-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: column;    
     align-items: center;
     justify-content: center;
     height: 100vh;
@@ -465,6 +465,10 @@ form {
     color: black;
     width: 100px;
     height: 100%;
+}
+.btn-inventario {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .perfilTitulo {

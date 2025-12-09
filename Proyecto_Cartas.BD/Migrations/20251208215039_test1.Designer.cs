@@ -12,7 +12,7 @@ using Proyecto_Cartas.BD.Datos;
 namespace Proyecto_Cartas.BD.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251207203556_test1")]
+    [Migration("20251208215039_test1")]
     partial class test1
     {
         /// <inheritdoc />
